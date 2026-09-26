@@ -1,0 +1,757 @@
+// ==UserScript==
+// @name         Arson Analyst
+// @namespace    torn
+// @version      0.1
+// @description  Analyze Arson recipes, costs and profitability
+// @match        https://www.torn.com/page.php?sid=crimes*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+    const SCRIPT_VERSION = "0.14";
+    const LOG_PREFIX = `[Arson Analyst Clean ${SCRIPT_VERSION}]`;
+    console.log(LOG_PREFIX, "Userscript loaded");
+
+    // -------------------------------------------------------------------------
+    // Configuration and persistent state
+    // -------------------------------------------------------------------------
+
+    // Recipe database loaded by arson_recipes.js.
+    const recipes = window.arsonRecipes;
+
+    const igniters = [
+        "Lighter",
+        "Flamethrower",
+        "Molotov Cocktail"
+    ];
+
+    const storedPrices = localStorage.getItem(
+        "arsonAnalyst.itemPrices"
+    );
+
+    let itemPrices = JSON.parse(storedPrices);
+    let pendingCollect = null;
+    let previousResults = [];
+    let profitThreshold1 =
+        Number(localStorage.getItem("arsonAnalyst.profitThreshold1")) || 1500;
+    let profitThreshold2 =
+        Number(localStorage.getItem("arsonAnalyst.profitThreshold2")) || 3000;
+    let profitThreshold3 =
+        Number(localStorage.getItem("arsonAnalyst.profitThreshold3")) || 5000;
+
+    console.log(LOG_PREFIX, " Item prices:", itemPrices);
+
+    // -------------------------------------------------------------------------
+    // Tooltip UI
+    // -------------------------------------------------------------------------
+
+    const tooltip = document.createElement("div");
+
+    tooltip.style.position = "fixed";
+    tooltip.style.background = "white";
+    tooltip.style.color = "black";
+    tooltip.style.border = "1px solid black";
+    tooltip.style.zIndex = "9999";
+    tooltip.style.display = "none";
+    tooltip.style.fontSize = "11px";
+    tooltip.style.lineHeight = "1.4";
+    tooltip.style.padding = "8px 10px";
+    tooltip.style.whiteSpace = "normal";
+
+    document.body.appendChild(tooltip);
+
+    // -------------------------------------------------------------------------
+    // Torn API and price cache
+    // -------------------------------------------------------------------------
+
+    // Fetch current market prices for every consumable used by the recipe database.
+    async function fetchItemPrices() {
+
+        const apiKey = localStorage.getItem("tornApiKey");
+
+        const wantedIds = [
+            45, 54, 172, 196, 200, 201, 220,
+            221, 259, 265, 275, 278, 280, 358,
+            407, 427, 742, 833, 1085, 1089, 1094,
+            1219, 1248, 1264, 1272, 1282, 1286,
+            1294, 1457, 1458, 1459, 1460, 1461,
+            1462, 1463
+        ];
+        const response = await fetch(
+            "https://api.torn.com/v2/torn/" +
+            wantedIds.join(",") +
+            "/items?key=" + apiKey
+        );
+
+        const data = await response.json();
+        if (data.error) {
+            console.error(
+                LOG_PREFIX, "API error:",
+                data.error
+            );
+            return null;
+        }
+
+        const newPrices = {};
+
+        for (let i = 0; i < data.items.length; i++) {
+            let item = data.items[i];
+            newPrices[item.name] = item.value.market_price;
+        }
+
+        return newPrices;
+    }
+
+    function formatUpdateDate(timestamp) {
+
+        const date = new Date(Number(timestamp));
+
+        return "Last price update: " + date.toLocaleString("en-GB", {
+            timeZone: "UTC",
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+        }) + " UTC";
+
+    }
+    console.log(
+        LOG_PREFIX, "Last update:",
+        formatUpdateDate(
+            localStorage.getItem("arsonAnalyst.pricesLastUpdate")
+        )
+    );
+
+    // -------------------------------------------------------------------------
+    // Tooltip formatting helpers
+    // -------------------------------------------------------------------------
+
+    // Escape values inserted into tooltip HTML.
+    function escapeHTML(value) {
+        return String(value).replace(/[&<>"']/g, function(char) {
+            return {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            }[char];
+        });
+    }
+
+    function tooltipRow(label, value, bullet = false) {
+        return '<div style="display:flex;justify-content:space-between;gap:16px">' +
+            '<span style="color:#aaa;white-space:nowrap">' +
+            (bullet ? "• " : "") + label +
+            '</span>' +
+            '<span style="text-align:right;white-space:nowrap">' +
+            escapeHTML(value) +
+            '</span>' +
+            '</div>';
+    }
+
+    // This displays only what the legacy database actually records.
+    function renderIncompleteRecipe(recipe) {
+        let html = "";
+        if (recipe.evidence) html += tooltipRow("Evidence", formatItems(recipe.evidence), true);
+        if (recipe.place) html += tooltipRow("Place", formatItems(recipe.place), true);
+        if (recipe.igniter) html += tooltipRow("Ignite", recipe.igniter, true);
+        if (recipe.stoke) html += tooltipRow("Stoke", formatItems(recipe.stoke), true);
+        if (recipe.dampen) html += tooltipRow("Dampen", formatItems(recipe.dampen), true);
+
+        // Retain partial legacy evidence and tentative "Try" hints.
+        // Display the igniter determined during recipe import.
+        if (recipe.notes) {
+            for (let note of recipe.notes) html += tooltipRow("Note", note, true);
+        }
+        if (recipe.payout != null) {
+            html += '<div style="border-top:1px solid #bbb;margin:6px 0"></div>';
+            html += tooltipRow("Payout", "$" + Number(recipe.payout).toLocaleString("en-US"));
+         }
+        if (!html) return "Recipe not documented";
+        return html + '<div style="border-top:1px solid #bbb;margin:6px 0"></div>' +
+            '<div style="color:#777">Incomplete recipe</div>';
+    }
+
+    // Format an item map such as {Gasoline: 2} for display.
+    function formatItems(items) {
+
+        let text = "";
+
+        for (let item in items) {
+
+            if (text !== "") {
+                text = text + ", ";
+            }
+
+            text = text + items[item] + " " + item;
+        }
+
+        return text;
+    }
+
+    // -------------------------------------------------------------------------
+    // Recipe cost, nerve and profitability calculations
+    // -------------------------------------------------------------------------
+
+    // Igniters are reusable and therefore excluded from consumable cost.
+    function calculateItemsCost(items) {
+
+        let cost = 0;
+
+        for (let item in items) {
+
+            if (igniters.includes(item)) {
+                continue;
+            }
+
+            if (itemPrices[item] === undefined) {
+                console.warn(
+                    LOG_PREFIX, "Missing price for:", item
+                );
+                return NaN;
+            }
+
+            cost = cost + items[item] * itemPrices[item];
+        }
+
+        return cost;
+    }
+
+    function calculateRecipeCost(recipe) {
+        let cost = calculateItemsCost(recipe.place);
+
+        if (recipe.stoke)
+            cost += calculateItemsCost(recipe.stoke);
+
+        if (recipe.dampen)
+            cost += calculateItemsCost(recipe.dampen);
+
+        if (recipe.evidence)
+            cost += calculateItemsCost(recipe.evidence);
+
+        return cost;
+    }
+
+
+    function countActions(items) {
+
+        let actions = 0;
+
+        if (!items) {
+            return 0;
+        }
+
+        for (let item in items) {
+            actions = actions + items[item];
+        }
+
+        return actions;
+    }
+
+    function calculateNerve(recipe) {
+
+        let actions = 1;  // Ignite
+
+        actions += countActions(recipe.evidence);
+        actions += countActions(recipe.place);
+        actions += countActions(recipe.stoke);
+        actions += countActions(recipe.dampen);
+
+        // Breach (3) + Collect (2) are fixed; every counted action costs 5 nerve.
+        return 5 + 5 * actions;
+    }
+
+    function calculateProfitPerNerve(recipe) {
+
+        let profit = recipe.payout - calculateRecipeCost(recipe);
+        let nerve = calculateNerve(recipe);
+
+        return profit / nerve;
+    }
+
+    // Return the best usable Profit/Nerve value among the known recipes.
+    function getBestProfitPerNerve(scenarioRecipes) {
+        let best = null;
+
+        for (let recipe of scenarioRecipes) {
+            if (recipe.status !== "documented" ||
+                recipe.payout == null ||
+                recipe.igniter == null ||
+                !recipe.place) {
+                continue;
+            }
+
+            let value = calculateProfitPerNerve(recipe);
+
+            if (Number.isFinite(value) && (best === null || value > best)) {
+                best = value;
+            }
+        }
+
+        return best;
+    }
+
+    // -------------------------------------------------------------------------
+    // Mission row highlighting
+    // -------------------------------------------------------------------------
+
+    function colorArsonRow(element, scenarioRecipes) {
+        let profitPerNerve = getBestProfitPerNerve(scenarioRecipes);
+
+        // No usable recipe: keep Torn's original background.
+        if (profitPerNerve === null) {
+            element.style.backgroundColor = "";
+            return;
+        }
+
+        if (profitPerNerve <= profitThreshold1) {
+            element.style.backgroundColor = "rgba(100, 45, 45, 0.55)";
+        } else if (profitPerNerve <= profitThreshold2) {
+            element.style.backgroundColor = "rgba(125, 105, 35, 0.45)";
+        } else if (profitPerNerve <= profitThreshold3) {
+            element.style.backgroundColor = "rgba(45, 105, 55, 0.45)";
+        } else {
+            element.style.backgroundColor = "rgba(55, 145, 65, 0.55)";
+        }
+    }
+
+    function updateArsonRowColor(arson) {
+
+        let scenario = arson.children[1].textContent;
+        let crimeOption = arson.closest(".crime-option");
+        let row = crimeOption?.querySelector(".crime-option-sections");
+
+        if (!row) {
+            return;
+        }
+
+        // Collect has priority over profitability highlighting.
+        if (crimeOption.textContent.toLowerCase().includes("collect")) {
+            row.style.backgroundColor = "rgba(32, 92, 155, 0.78)";
+            return;
+        }
+
+        // Otherwise, use the profitability color when a recipe is known.
+        if (recipes[scenario]) {
+            colorArsonRow(row, recipes[scenario]);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Collect tracking and payout detection
+    // -------------------------------------------------------------------------
+
+    // Return the result panels currently showing SUCCESS.
+    function getArsonResults() {
+        return [...document.querySelectorAll("*")]
+            .filter(el =>
+                el.children.length === 0 &&
+                el.textContent.trim() === "SUCCESS"
+            )
+            .map(el => el.parentElement);
+    }
+
+    // Attach one click listener to a Collect button and snapshot existing results.
+    function watchCollect(arson) {
+
+        let crimeOption = arson.closest(".crime-option");
+        let collectButton =
+            crimeOption?.querySelector('button[aria-label^="Collect"]');
+
+        if (!collectButton || collectButton.dataset.arsonCollectProcessed) {
+            return;
+        }
+
+        collectButton.dataset.arsonCollectProcessed = "true";
+
+        collectButton.addEventListener("click", function() {
+            previousResults = getArsonResults();
+
+            pendingCollect = {
+                building: arson.children[0].textContent,
+                scenario: arson.children[1].textContent
+            };
+
+            console.log(LOG_PREFIX, "Collect:", pendingCollect);
+        });
+    }
+
+    // Find the SUCCESS panel created after Collect and extract its cash payout.
+    function findArsonResult() {
+
+        let currentResults = getArsonResults();
+
+        let newResult = currentResults.find(
+            result => !previousResults.includes(result)
+        );
+
+        if (!newResult) {
+            return null;
+        }
+
+        let payoutText = [...newResult.querySelectorAll("*")]
+            .find(el => /^\$[\d,]+$/.test(el.textContent.trim()))
+            ?.textContent.trim();
+
+        if (!payoutText) {
+            return null;
+        }
+
+        return Number(payoutText.replace(/[$,]/g, ""));
+    }
+
+    // -------------------------------------------------------------------------
+    // Arson DOM processing and recipe tooltip
+    // -------------------------------------------------------------------------
+
+    // Process Arson elements currently present in the DOM. Torn virtualizes the
+    // mission list, so this function is intentionally safe to call repeatedly.
+    function processArsons() {
+
+        // Do nothing outside the Arson page
+        if (location.hash !== "#/arson") {
+            return;
+        }
+
+        const titles = document.querySelectorAll('[class*="title___"]');
+
+        for (let i = 0; i < titles.length; i++) {
+
+            if (titles[i].textContent.trim() === "Arson") {
+
+                if (!updateButton.isConnected) {
+                    titles[i].after(updateControls);
+                }
+
+                break;
+            }
+        }
+        const arsons =
+            document.querySelectorAll('[class*="titleAndScenario"]');
+
+        for (let i = 0; i < arsons.length; i++) {
+
+            // Row color may need to change later, for example when Collect appears.
+            updateArsonRowColor(arsons[i]);
+            // Watch for a Collect button.
+            watchCollect(arsons[i]);
+
+            // Event listeners only need to be added once.
+            if (arsons[i].dataset.arsonProcessed) {
+                continue;
+            }
+
+            arsons[i].dataset.arsonProcessed = "true";
+
+            arsons[i].addEventListener("mouseenter", function() {
+
+                let scenario = arsons[i].children[1].textContent;
+
+                // No known recipe for this scenario
+                if (!recipes[scenario]) {
+                    return;
+                }
+                let scenarioRecipes = recipes[scenario];
+
+                let rect = arsons[i].getBoundingClientRect();
+
+                let tooltipHTML = "";
+
+                const thinLine =
+                    '<div style="border-top:1px solid #bbb;margin:6px 0"></div>';
+
+                const recipeLine =
+                    '<div style="border-top:1px dashed #888;margin:10px 0"></div>';
+
+                for (let j = 0; j < scenarioRecipes.length; j++) {
+
+                    let recipe = scenarioRecipes[j];
+
+                    // Separator between recipes
+                    if (j > 0) {
+                        tooltipHTML += recipeLine;
+                    }
+
+                    // Incomplete recipes
+                    if (recipe.status === "incomplete" ||
+                        recipe.payout == null ||
+                        recipe.igniter == null ||
+                        !recipe.place) {
+
+                        tooltipHTML += renderIncompleteRecipe(recipe);
+                        continue;
+                    }
+
+                    let totalCost = calculateRecipeCost(recipe);
+                    let profitPerNerve = calculateProfitPerNerve(recipe);
+
+                    // Actions
+                    if (recipe.evidence) {
+                        tooltipHTML += tooltipRow(
+                            "Evidence", formatItems(recipe.evidence), true
+                        );
+                    }
+
+                    tooltipHTML += tooltipRow(
+                        "Place", formatItems(recipe.place), true
+                    );
+
+                    tooltipHTML += tooltipRow(
+                        "Ignite", recipe.igniter, true
+                    );
+
+                    if (recipe.stoke) {
+                        tooltipHTML += tooltipRow(
+                            "Stoke", formatItems(recipe.stoke), true
+                        );
+                    }
+
+                    if (recipe.dampen) {
+                        tooltipHTML += tooltipRow(
+                            "Dampen", formatItems(recipe.dampen), true
+                        );
+                    }
+
+                    // Results
+                    tooltipHTML += thinLine;
+
+                    tooltipHTML += tooltipRow(
+                        "Nerve",
+                        calculateNerve(recipe)
+                    );
+
+                    tooltipHTML += tooltipRow(
+                        "Payout",
+                        "$" + recipe.payout.toLocaleString("en-US")
+                    );
+
+                    tooltipHTML += tooltipRow(
+                        "Items Cost",
+                        Number.isFinite(totalCost)
+                            ? "$" + totalCost.toLocaleString("en-US")
+                            : "Price unavailable"
+                    );
+
+                    tooltipHTML += tooltipRow(
+                        "Profit/Nerve",
+                        Number.isFinite(profitPerNerve)
+                            ? "$" + Math.round(profitPerNerve).toLocaleString("en-US")
+                            : "Unavailable"
+                    );
+                }
+
+                tooltip.innerHTML = tooltipHTML;
+
+                tooltip.style.left = rect.left + "px";
+                tooltip.style.top = (rect.bottom + 5) + "px";
+                tooltip.style.display = "block";
+            });
+
+            arsons[i].addEventListener("mouseleave", function() {
+                tooltip.style.display = "none";
+            });
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Controls: price update and profitability thresholds
+    // -------------------------------------------------------------------------
+
+    function styleButton(button) {
+        button.style.background = "#555";
+        button.style.color = "white";
+        button.style.border = "1px solid #777";
+        button.style.borderRadius = "4px";
+        button.style.padding = "3px 8px";
+        button.style.cursor = "pointer";
+    }
+    // Create the update prices button.
+    const updateButton = document.createElement("button");
+
+    updateButton.id = "arson-analyst-update";
+    updateButton.textContent = "Update prices";
+    styleButton(updateButton);
+    updateButton.style.marginLeft = "10px";
+    updateButton.addEventListener("click", async function() {
+
+        console.log(LOG_PREFIX, "Updating prices...");
+
+        let newPrices = await fetchItemPrices();
+        if (newPrices === null) {
+            return;
+        }
+
+        itemPrices = newPrices;
+        localStorage.setItem(
+            "arsonAnalyst.itemPrices",
+            JSON.stringify(newPrices)
+        );
+        localStorage.setItem(
+            "arsonAnalyst.pricesLastUpdate",
+            String(Date.now())
+        );
+        updateDateLabel.textContent = formatUpdateDate(
+            localStorage.getItem("arsonAnalyst.pricesLastUpdate")
+        );
+        console.log(LOG_PREFIX, "New prices:", newPrices);
+        console.log(LOG_PREFIX, "Prices saved");
+    });
+
+    // Create the profitability threshold settings button.
+    const settingsButton = document.createElement("button");
+
+    settingsButton.textContent = "Settings";
+    styleButton(settingsButton);
+
+    // Create the settings panel
+    const settingsPanel = document.createElement("div");
+
+    settingsPanel.style.display = "none";
+    settingsPanel.style.position = "absolute";
+    settingsPanel.style.background = "white";
+    settingsPanel.style.color = "black";
+    settingsPanel.style.border = "1px solid #777";
+    settingsPanel.style.borderRadius = "4px";
+    settingsPanel.style.padding = "10px";
+    settingsPanel.style.zIndex = "10000";
+
+    settingsPanel.innerHTML = `
+    <div style="font-weight:bold; margin-bottom:8px;">
+        Profit/Nerve thresholds
+    </div>
+
+    <div>Threshold 1: <input type="number" value="1500" style="width:65px"></div>
+    <div>Threshold 2: <input type="number" value="3000" style="width:65px"></div>
+    <div>Threshold 3: <input type="number" value="5000" style="width:65px"></div>
+
+    <div style="margin-top:8px; text-align:right;">
+        <button id="arson-settings-save">Save</button>
+    </div>
+`;
+
+    document.body.appendChild(settingsPanel);
+
+    const thresholdInputs =
+        settingsPanel.querySelectorAll('input[type="number"]');
+
+    const threshold1Input = thresholdInputs[0];
+    const threshold2Input = thresholdInputs[1];
+    const threshold3Input = thresholdInputs[2];
+    threshold1Input.value = profitThreshold1;
+    threshold2Input.value = profitThreshold2;
+    threshold3Input.value = profitThreshold3;
+
+    const settingsSaveButton =
+        settingsPanel.querySelector("#arson-settings-save");
+    styleButton(settingsButton);
+
+    settingsSaveButton.addEventListener("click", function() {
+
+        let threshold1 = Number(threshold1Input.value);
+        let threshold2 = Number(threshold2Input.value);
+        let threshold3 = Number(threshold3Input.value);
+
+        if (!(threshold1 < threshold2 && threshold2 < threshold3)) {
+            alert("Thresholds must be in increasing order.");
+            return;
+        }
+
+        console.log(LOG_PREFIX, "Thresholds:", {
+            threshold1,
+            threshold2,
+            threshold3
+        });
+
+        profitThreshold1 = threshold1;
+        profitThreshold2 = threshold2;
+        profitThreshold3 = threshold3;
+        localStorage.setItem(
+            "arsonAnalyst.profitThreshold1",
+            profitThreshold1
+        );
+        localStorage.setItem(
+            "arsonAnalyst.profitThreshold2",
+            profitThreshold2
+        );
+        localStorage.setItem(
+            "arsonAnalyst.profitThreshold3",
+            profitThreshold3
+        );
+        processArsons();
+
+        settingsPanel.style.display = "none";
+    });
+
+    settingsButton.addEventListener("click", function() {
+
+        if (settingsPanel.style.display === "none") {
+
+            let rect = settingsButton.getBoundingClientRect();
+
+            settingsPanel.style.left = rect.left + "px";
+            settingsPanel.style.top = (rect.bottom + 4) + "px";
+            settingsPanel.style.display = "block";
+
+        } else {
+            settingsPanel.style.display = "none";
+        }
+    });
+    const updateDateLabel = document.createElement("span");
+
+    updateDateLabel.style.marginLeft = "10px";
+    updateDateLabel.style.fontSize = "11px";
+
+    const lastUpdate = localStorage.getItem(
+        "arsonAnalyst.pricesLastUpdate"
+    );
+
+    if (lastUpdate) {
+        updateDateLabel.textContent = formatUpdateDate(lastUpdate);
+    }
+
+    const updateControls = document.createElement("div");
+
+    updateControls.style.display = "flex";
+    updateControls.style.alignItems = "center";
+    updateControls.style.gap = "8px";
+
+    updateControls.append(updateDateLabel, updateButton, settingsButton);
+
+
+    // -------------------------------------------------------------------------
+    // Dynamic DOM observer and startup
+    // -------------------------------------------------------------------------
+
+    // Torn creates, removes and replaces mission elements dynamically.
+    const observer = new MutationObserver(function() {
+        processArsons();
+
+        if (pendingCollect) {
+            let payout = findArsonResult();
+
+            if (payout !== null) {
+                console.log(LOG_PREFIX, "Result:", {
+                    building: pendingCollect.building,
+                    scenario: pendingCollect.scenario,
+                    payout: payout
+                });
+
+                pendingCollect = null;
+            }
+        }
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+
+    // Process elements that may already exist when the userscript starts.
+    processArsons();
+
+})();
