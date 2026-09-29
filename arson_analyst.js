@@ -22,8 +22,7 @@
 
     const igniters = [
         "Lighter",
-        "Flamethrower",
-        "Molotov Cocktail"
+        "Flamethrower"
     ];
 
     const storedPrices = localStorage.getItem(
@@ -223,6 +222,9 @@
 
     function calculateRecipeCost(recipe) {
         let cost = calculateItemsCost(recipe.place);
+        if (recipe.igniter === "Molotov Cocktail") {
+            cost += itemPrices["Molotov Cocktail"];
+        }
 
         if (recipe.stoke)
             cost += calculateItemsCost(recipe.stoke);

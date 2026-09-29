@@ -2,49 +2,7 @@
 // The raw field preserves every original source line, including uncertain Try notes.
 // Parsed fields are a convenience; check raw before relying on ambiguous entries.
 window.arsonRecipes = {
-  "A Bitter Taste": [
-    {
-      "payout": null,
-      "igniter": null,
-      "evidence": null,
-      "place": null,
-      "stoke": null,
-      "dampen": null,
-      "status": "incomplete",
-      "notes": [],
-      "raw": [
-        "Profit/Nerve: ",
-        "Flamethrower: ",
-        "Evidence: ",
-        "Place: ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    }
-  ],
   "A Black Mark": [
-    {
-      "payout": 210000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": {
-        "Lighter": 1
-      },
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout:210K",
-        "Profit/Nerve: ",
-        "Flamethrower:  No",
-        "Place: 2 Gasoline ",
-        "Stoke: 1 Lighter",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 210000,
       "igniter": "Flamethrower",
@@ -69,28 +27,6 @@ window.arsonRecipes = {
     }
   ],
   "A Burnt Child Dreads the Fire": [
-    {
-      "payout": 190000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Kerosene": 2
-      },
-      "stoke": {
-        "Methane Tank": 1
-      },
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 190K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 2 Kerosene ",
-        "Stoke: 1 Methane Tank",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 235000,
       "igniter": "Flamethrower",
@@ -118,26 +54,6 @@ window.arsonRecipes = {
   ],
   "A Dirty Job": [
     {
-      "payout": 30000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout:30K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 2 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 32000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -159,26 +75,6 @@ window.arsonRecipes = {
     }
   ],
   "A Fungus Among Us": [
-    {
-      "payout": 38000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout:38K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 3 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 34000,
       "igniter": "Flamethrower",
@@ -225,27 +121,6 @@ window.arsonRecipes = {
   "A Mug's Game": [
     {
       "payout": 55000,
-      "igniter": "Molotov Cocktail",
-      "evidence": null,
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout:55K",
-        "Profit/Nerve: ",
-        "Ignite: 1 Molotov Cocktail",
-        "Flamethrower: No",
-        "Place: 2 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
-      "payout": 55000,
       "igniter": "Flamethrower",
       "evidence": null,
       "place": {
@@ -268,28 +143,6 @@ window.arsonRecipes = {
     }
   ],
   "A Problem Shared": [
-    {
-      "payout": 180000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 6
-      },
-      "stoke": {
-        "Gasoline": 1
-      },
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 180K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 6 Gasoline",
-        "Stoke: 1 Gasoline",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 180000,
       "igniter": "Flamethrower",
@@ -362,29 +215,6 @@ window.arsonRecipes = {
   ],
   "All Mouth and Trousers": [
     {
-      "payout": 51000,
-      "igniter": "Lighter",
-      "evidence": {
-        "Diamond Ring": 1
-      },
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 51K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Evidence: 1 Diamond Ring",
-        "Place: 2 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 56000,
       "igniter": "Flamethrower",
       "evidence": {
@@ -434,26 +264,6 @@ window.arsonRecipes = {
   ],
   "Anon Starter": [
     {
-      "payout": 1200,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 1
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout:1.2K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 1 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 31000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -475,26 +285,6 @@ window.arsonRecipes = {
     }
   ],
   "Apart of the Problem": [
-    {
-      "payout": 265000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 6
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout:265K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 6 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 265000,
       "igniter": "Flamethrower",
@@ -543,27 +333,6 @@ window.arsonRecipes = {
     }
   ],
   "Ashes to Ancestors": [
-    {
-      "payout": 90000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": {
-        "Gasoline": 1
-      },
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout:90K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: 1 Gasoline "
-      ]
-    },
     {
       "payout": 90000,
       "igniter": "Flamethrower",
@@ -652,29 +421,6 @@ window.arsonRecipes = {
   ],
   "Bald Faced Destruction": [
     {
-      "payout": 230000,
-      "igniter": "Lighter",
-      "evidence": {
-        "Raw Ivory": 1
-      },
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout:230K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Evidence: 1 Raw Ivory",
-        "Place: 4 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 245000,
       "igniter": "Flamethrower",
       "evidence": {
@@ -700,27 +446,6 @@ window.arsonRecipes = {
   ],
   "Bang For Your Buck": [
     {
-      "payout": 21000,
-      "igniter": "Lighter",
-      "evidence": {
-        "Grenade": 1
-      },
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout:21K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Evidence: 1 Grenade",
-        "Place: 2 Gasoline"
-      ]
-    },
-    {
       "payout": 44000,
       "igniter": "Flamethrower",
       "evidence": {
@@ -743,29 +468,6 @@ window.arsonRecipes = {
     }
   ],
   "Banking on It": [
-    {
-      "payout": 120000,
-      "igniter": "Lighter",
-      "evidence": {
-        "Stapler": 1
-      },
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout:120K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Evidence: 1 Stapler",
-        "Place: 3 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 200000,
       "igniter": "Flamethrower",
@@ -791,28 +493,6 @@ window.arsonRecipes = {
     }
   ],
   "Beach Bum": [
-    {
-      "payout": 20000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 1
-      },
-      "stoke": {
-        "Gasoline": 1
-      },
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 20K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 1 Gasoline",
-        "Stoke: 1 Gasoline",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 19000,
       "igniter": "Flamethrower",
@@ -911,26 +591,6 @@ window.arsonRecipes = {
   ],
   "Blaze of Glory": [
     {
-      "payout": null,
-      "igniter": "Lighter",
-      "evidence": {
-        "Toothbrush": 1
-      },
-      "place": null,
-      "stoke": null,
-      "dampen": null,
-      "status": "incomplete",
-      "notes": [],
-      "raw": [
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Evidence: 1 Toothbrush",
-        "Place: ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 180000,
       "igniter": "Flamethrower",
       "evidence": {
@@ -956,47 +616,7 @@ window.arsonRecipes = {
       ]
     }
   ],
-  "Blown to High Heaven": [
-    {
-      "payout": null,
-      "igniter": null,
-      "evidence": null,
-      "place": null,
-      "stoke": null,
-      "dampen": null,
-      "status": "incomplete",
-      "notes": [],
-      "raw": [
-        "Profit/Nerve: ",
-        "Flamethrower: ",
-        "Evidence: ",
-        "Place: ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    }
-  ],
   "Body of Evidence": [
-    {
-      "payout": 105000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 6
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 105K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 6 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 105000,
       "igniter": "Flamethrower",
@@ -1045,26 +665,6 @@ window.arsonRecipes = {
     }
   ],
   "Boom Industry": [
-    {
-      "payout": 130000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 5
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [
-        "Profit/Nerve: 3.6K"
-      ],
-      "raw": [
-        "Payout: 130K",
-        "Profit/Nerve: 3.6K",
-        "Flamethrower: No",
-        "Place: 5 Gasoline "
-      ]
-    },
     {
       "payout": 100000,
       "igniter": "Flamethrower",
@@ -1135,67 +735,7 @@ window.arsonRecipes = {
       ]
     }
   ],
-  "Bugging Me": [
-    {
-      "payout": null,
-      "igniter": null,
-      "evidence": null,
-      "place": null,
-      "stoke": null,
-      "dampen": null,
-      "status": "incomplete",
-      "notes": [],
-      "raw": [
-        "Profit/Nerve: ",
-        "Flamethrower: ",
-        "Evidence: ",
-        "Place: ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    }
-  ],
-  "Bummed Out": [
-    {
-      "payout": null,
-      "igniter": null,
-      "evidence": null,
-      "place": null,
-      "stoke": null,
-      "dampen": null,
-      "status": "incomplete",
-      "notes": [],
-      "raw": [
-        "Profit/Nerve: ",
-        "Flamethrower: ",
-        "Evidence: ",
-        "Place: ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    }
-  ],
   "Burn After Screening": [
-    {
-      "payout": 99000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 99K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 3 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 100000,
       "igniter": "Flamethrower",
@@ -1220,28 +760,6 @@ window.arsonRecipes = {
   "Burn Notice": [
     {
       "payout": 175000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": {
-        "Gasoline": 3
-      },
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 175K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: 3 Gasoline",
-        "Dampen: "
-      ]
-    },
-    {
-      "payout": 175000,
       "igniter": "Flamethrower",
       "evidence": null,
       "place": {
@@ -1264,31 +782,6 @@ window.arsonRecipes = {
     }
   ],
   "Burn Rubber": [
-    {
-      "payout": 50000,
-      "igniter": "Lighter",
-      "evidence": {
-        "Mayan Statue": 1
-      },
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [
-        "Profit/Nerve: 1.7K"
-      ],
-      "raw": [
-        "Payout: 50K",
-        "Profit/Nerve: 1.7K",
-        "Flamethrower: No",
-        "Evidence: 1 Mayan Statue",
-        "Place: 2 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 67000,
       "igniter": "Flamethrower",
@@ -1316,26 +809,6 @@ window.arsonRecipes = {
     }
   ],
   "Burn the Deck": [
-    {
-      "payout": 57000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 57K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 3 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 96000,
       "igniter": "Flamethrower",
@@ -1406,23 +879,6 @@ window.arsonRecipes = {
   ],
   "Burning Ambition": [
     {
-      "payout": null,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": null,
-      "stoke": null,
-      "dampen": null,
-      "status": "incomplete",
-      "notes": [],
-      "raw": [
-        "Profit/Nerve: ",
-        "Flamethrower: No ",
-        "Place: ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 46000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -1446,30 +902,6 @@ window.arsonRecipes = {
     }
   ],
   "Burning Calories": [
-    {
-      "payout": 84000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [
-        "Try: 5 Gasoline",
-        "Profit/Nerve: 2.7K"
-      ],
-      "raw": [
-        "Try: 5 Gasoline",
-        "Payout: 84K",
-        "Profit/Nerve: 2.7K",
-        "Flamethrower: No",
-        "Place: 4 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 100000,
       "igniter": "Flamethrower",
@@ -1520,26 +952,6 @@ window.arsonRecipes = {
   "Burning Memory": [
     {
       "payout": 32000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 32K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 3 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
-      "payout": 32000,
       "igniter": "Flamethrower",
       "evidence": null,
       "place": {
@@ -1560,26 +972,6 @@ window.arsonRecipes = {
     }
   ],
   "Burning Through Cash": [
-    {
-      "payout": 58000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Oxygen Tank": 1
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 58K",
-        "Profit/Nerve: ",
-        "Flamethrower: No ",
-        "Place: 1 Oxygen Tank",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 105000,
       "igniter": "Flamethrower",
@@ -1630,25 +1022,6 @@ window.arsonRecipes = {
   ],
   "Burn up the Dancefloor": [
     {
-      "payout": 150000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout:150K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 3 Gasoline",
-        "Stoke: "
-      ]
-    },
-    {
       "payout": 175000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -1691,30 +1064,6 @@ window.arsonRecipes = {
     }
   ],
   "Camera Tricks": [
-    {
-      "payout": 115000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 5
-      },
-      "stoke": {
-        "Gasoline": 1
-      },
-      "dampen": null,
-      "status": "documented",
-      "notes": [
-        "Profit/Nerve: 2.9K"
-      ],
-      "raw": [
-        "Payout: 115K",
-        "Profit/Nerve: 2.9K",
-        "Flamethrower: No",
-        "Place: 5 Gasoline ",
-        "Stoke: 1 Gasoline",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 115000,
       "igniter": "Flamethrower",
@@ -1782,49 +1131,9 @@ window.arsonRecipes = {
         "Stoke: ",
         "Dampen: "
       ]
-    },
-    {
-      "payout": 59000,
-      "igniter": "Flamethrower",
-      "evidence": null,
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 59K",
-        "Profit/Nerve: ",
-        "Flamethrower: Yes",
-        "Place: 2 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
     }
   ],
   "Charcoal Sketch": [
-    {
-      "payout": 49000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 49K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 3 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 39000,
       "igniter": "Flamethrower",
@@ -1895,28 +1204,6 @@ window.arsonRecipes = {
   "Child's Play": [
     {
       "payout": 23000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [
-        "Profit/Nerve: 1.4K"
-      ],
-      "raw": [
-        "Payout: 23K",
-        "Profit/Nerve: 1.4K",
-        "Flamethrower: No ",
-        "Place: 2 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
-      "payout": 23000,
       "igniter": "Flamethrower",
       "evidence": null,
       "place": {
@@ -1961,28 +1248,6 @@ window.arsonRecipes = {
     }
   ],
   "Clean Sweep": [
-    {
-      "payout": 150000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 5
-      },
-      "stoke": {
-        "Diesel": 1
-      },
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 150K",
-        "Profit/Nerve:  ",
-        "Flamethrower: No",
-        "Place: 5 Gasoline",
-        "Stoke: 1 Diesel",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 150000,
       "igniter": "Flamethrower",
@@ -2082,28 +1347,6 @@ window.arsonRecipes = {
   ],
   "Cold Feet": [
     {
-      "payout": 100000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 6
-      },
-      "stoke": {
-        "Diesel": 1
-      },
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 100K",
-        "Profit/Nerve:  ",
-        "Flamethrower: No",
-        "Place: 6 Gasoline ",
-        "Stoke: 1 Diesel ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 120000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -2153,29 +1396,6 @@ window.arsonRecipes = {
   ],
   "Cooked and Burned": [
     {
-      "payout": 70000,
-      "igniter": "Lighter",
-      "evidence": {
-        "Ammonia": 1
-      },
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 70K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Evidence: 1 Ammonia",
-        "Place: 3 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 73000,
       "igniter": "Flamethrower",
       "evidence": {
@@ -2203,26 +1423,6 @@ window.arsonRecipes = {
   ],
   "Cooking the Books": [
     {
-      "payout": 22000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 22K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 2 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 25000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -2238,26 +1438,6 @@ window.arsonRecipes = {
         "Profit/Nerve: ",
         "Flamethrower: Yes",
         "Place: 1 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    }
-  ],
-  "Cooking Time": [
-    {
-      "payout": null,
-      "igniter": null,
-      "evidence": null,
-      "place": null,
-      "stoke": null,
-      "dampen": null,
-      "status": "incomplete",
-      "notes": [],
-      "raw": [
-        "Profit/Nerve: ",
-        "Flamethrower: ",
-        "Evidence: ",
-        "Place: ",
         "Stoke: ",
         "Dampen: "
       ]
@@ -2310,26 +1490,6 @@ window.arsonRecipes = {
     }
   ],
   "Crisp Bills": [
-    {
-      "payout": 35000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 35K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 2 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 39000,
       "igniter": "Flamethrower",
@@ -2393,26 +1553,6 @@ window.arsonRecipes = {
         "Ignite: Lighter",
         "Place: 1 Hydrogen Tank",
         "Stoke: 1 Hydrogen Tank",
-        "Dampen: "
-      ]
-    }
-  ],
-  "Cut to the Chase": [
-    {
-      "payout": null,
-      "igniter": null,
-      "evidence": null,
-      "place": null,
-      "stoke": null,
-      "dampen": null,
-      "status": "incomplete",
-      "notes": [],
-      "raw": [
-        "Profit/Nerve: ",
-        "Flamethrower: ",
-        "Evidence: ",
-        "Place: ",
-        "Stoke: ",
         "Dampen: "
       ]
     }
@@ -2556,24 +1696,6 @@ window.arsonRecipes = {
   ],
   "Don't Hate the Player": [
     {
-      "payout": 20000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 20K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 2 Gasoline"
-      ]
-    },
-    {
       "payout": 32000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -2592,50 +1714,7 @@ window.arsonRecipes = {
       ]
     }
   ],
-  "Doxing Clever": [
-    {
-      "payout": null,
-      "igniter": null,
-      "evidence": null,
-      "place": null,
-      "stoke": null,
-      "dampen": null,
-      "status": "incomplete",
-      "notes": [
-        "Try: Needs Thermite"
-      ],
-      "raw": [
-        "Try: Needs Thermite",
-        "Profit/Nerve: ",
-        "Flamethrower: ",
-        "Evidence: ",
-        "Place: ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    }
-  ],
   "Eight Lives": [
-    {
-      "payout": 4200,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 1
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 4.2K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 1 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 6000,
       "igniter": "Flamethrower",
@@ -2683,26 +1762,6 @@ window.arsonRecipes = {
   ],
   "End of the Line": [
     {
-      "payout": 100000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 5
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 100K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 5 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 78000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -2726,26 +1785,6 @@ window.arsonRecipes = {
   "Faction Fiction": [
     {
       "payout": 64500,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 64.5K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
-      "payout": 64500,
       "igniter": "Flamethrower",
       "evidence": null,
       "place": {
@@ -2766,28 +1805,6 @@ window.arsonRecipes = {
     }
   ],
   "Family Feud": [
-    {
-      "payout": 8000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [
-        "Profit/Nerve: 1.2K "
-      ],
-      "raw": [
-        "Payout: 8K",
-        "Profit/Nerve: 1.2K ",
-        "Flamethrower: No",
-        "Place: 2 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 20000,
       "igniter": "Flamethrower",
@@ -2858,26 +1875,6 @@ window.arsonRecipes = {
   "Final Cut": [
     {
       "payout": 150000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 150K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
-      "payout": 150000,
       "igniter": "Flamethrower",
       "evidence": null,
       "place": {
@@ -2916,26 +1913,6 @@ window.arsonRecipes = {
         "Profit/Nerve: ",
         "Flamethrower: Yes",
         "Place: 2 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    }
-  ],
-  "Finish Line": [
-    {
-      "payout": null,
-      "igniter": null,
-      "evidence": null,
-      "place": null,
-      "stoke": null,
-      "dampen": null,
-      "status": "incomplete",
-      "notes": [],
-      "raw": [
-        "Profit/Nerve: ",
-        "Flamethrower: ",
-        "Evidence: ",
-        "Place: ",
         "Stoke: ",
         "Dampen: "
       ]
@@ -3114,49 +2091,9 @@ window.arsonRecipes = {
         "Stoke: ",
         "Dampen: "
       ]
-    },
-    {
-      "payout": 16000,
-      "igniter": "Flamethrower",
-      "evidence": null,
-      "place": {
-        "Gasoline": 1
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 16K",
-        "Profit/Nerve: ",
-        "Flamethrower: yes",
-        "Place: 1 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
     }
   ],
   "Foul Play": [
-    {
-      "payout": 120000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 5
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 120K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 5 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 120000,
       "igniter": "Flamethrower",
@@ -3179,26 +2116,6 @@ window.arsonRecipes = {
     }
   ],
   "From the Ashes": [
-    {
-      "payout": 120000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 5
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 120K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 5 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 170000,
       "igniter": "Flamethrower",
@@ -3223,30 +2140,6 @@ window.arsonRecipes = {
     }
   ],
   "Gay Frogs": [
-    {
-      "payout": 41000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [
-        "Try: 3 Gasoline",
-        "Profit/Nerve: 1.3K"
-      ],
-      "raw": [
-        "Try: 3 Gasoline",
-        "Payout: 41K",
-        "Profit/Nerve: 1.3K",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 34000,
       "igniter": "Flamethrower",
@@ -3294,26 +2187,6 @@ window.arsonRecipes = {
   ],
   "Get Wrecked": [
     {
-      "payout": 90000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 90K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 84000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -3335,28 +2208,6 @@ window.arsonRecipes = {
     }
   ],
   "Going Viral": [
-    {
-      "payout": 190000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [
-        "Profit/Nerve: 4.9K"
-      ],
-      "raw": [
-        "Payout: 190K",
-        "Profit/Nerve: 4.9K",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 190000,
       "igniter": "Flamethrower",
@@ -3384,26 +2235,6 @@ window.arsonRecipes = {
   "Green With Envy": [
     {
       "payout": 120000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 6
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 120K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 6 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
-      "payout": 120000,
       "igniter": "Flamethrower",
       "evidence": null,
       "place": {
@@ -3426,26 +2257,6 @@ window.arsonRecipes = {
     }
   ],
   "Gym'll Fix It": [
-    {
-      "payout": 62000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 62K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 52000,
       "igniter": "Flamethrower",
@@ -3493,26 +2304,6 @@ window.arsonRecipes = {
   ],
   "Heat the Rich": [
     {
-      "payout": 34000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 34K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 3 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 40000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -3533,47 +2324,7 @@ window.arsonRecipes = {
       ]
     }
   ],
-  "Hell Fire": [
-    {
-      "payout": null,
-      "igniter": null,
-      "evidence": null,
-      "place": null,
-      "stoke": null,
-      "dampen": null,
-      "status": "incomplete",
-      "notes": [],
-      "raw": [
-        "Profit/Nerve: ",
-        "Flamethrower: ",
-        "Evidence: ",
-        "Place: ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    }
-  ],
   "Hide and Seek": [
-    {
-      "payout": 33000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 33K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 33000,
       "igniter": "Flamethrower",
@@ -3596,26 +2347,6 @@ window.arsonRecipes = {
     }
   ],
   "High Time": [
-    {
-      "payout": 4300,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 1
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 4.3K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 1 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 10000,
       "igniter": "Flamethrower",
@@ -3640,26 +2371,6 @@ window.arsonRecipes = {
     }
   ],
   "Hire and Fire": [
-    {
-      "payout": 49000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 49K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 3 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 57000,
       "igniter": "Flamethrower",
@@ -3727,26 +2438,6 @@ window.arsonRecipes = {
   ],
   "Home and Dry": [
     {
-      "payout": 35000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 35K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 3 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 49000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -3813,26 +2504,6 @@ window.arsonRecipes = {
   ],
   "Hot Dog": [
     {
-      "payout": 38000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 38K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 3 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 30500,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -3854,26 +2525,6 @@ window.arsonRecipes = {
     }
   ],
   "Hot Gossip": [
-    {
-      "payout": 62000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 62K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 3 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 62000,
       "igniter": "Flamethrower",
@@ -3941,29 +2592,6 @@ window.arsonRecipes = {
   ],
   "Hot out of the Gate": [
     {
-      "payout": 53000,
-      "igniter": "Lighter",
-      "evidence": {
-        "Gold Tooth": 1
-      },
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 53K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Evidence: 1 Gold Tooth",
-        "Place: 2 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 96000,
       "igniter": "Flamethrower",
       "evidence": {
@@ -3989,26 +2617,6 @@ window.arsonRecipes = {
   ],
   "Hot Profit": [
     {
-      "payout": 84000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 84K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 57500,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -4030,26 +2638,6 @@ window.arsonRecipes = {
     }
   ],
   "Hot Pursuit": [
-    {
-      "payout": 28000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 28K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 2 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 50000,
       "igniter": "Flamethrower",
@@ -4093,26 +2681,6 @@ window.arsonRecipes = {
       ]
     }
   ],
-  "Hot Under the Collar": [
-    {
-      "payout": null,
-      "igniter": null,
-      "evidence": null,
-      "place": null,
-      "stoke": null,
-      "dampen": null,
-      "status": "incomplete",
-      "notes": [],
-      "raw": [
-        "Profit/Nerve: ",
-        "Flamethrower: ",
-        "Evidence: ",
-        "Place: ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    }
-  ],
   "House Edge": [
     {
       "payout": 190000,
@@ -4130,26 +2698,6 @@ window.arsonRecipes = {
         "Profit/Nerve: ",
         "Flamethrower: No",
         "Place: 5 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
-      "payout": 135000,
-      "igniter": "Flamethrower",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 135K",
-        "Profit/Nerve: ",
-        "Flamethrower: Yes",
-        "Place: 3 Gasoline",
         "Stoke: ",
         "Dampen: "
       ]
@@ -4181,29 +2729,6 @@ window.arsonRecipes = {
   ],
   "Igniting Curiosity": [
     {
-      "payout": 100000,
-      "igniter": "Lighter",
-      "evidence": {
-        "Sumo Doll": 1
-      },
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 100K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Evidence: 1 Sumo Doll ",
-        "Place: 3 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 260000,
       "igniter": "Flamethrower",
       "evidence": {
@@ -4222,26 +2747,6 @@ window.arsonRecipes = {
         "Flamethrower: Yes",
         "Evidence: 1 Sumo Doll ",
         "Place: 4 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    }
-  ],
-  "Improving the Odds": [
-    {
-      "payout": null,
-      "igniter": null,
-      "evidence": null,
-      "place": null,
-      "stoke": null,
-      "dampen": null,
-      "status": "incomplete",
-      "notes": [],
-      "raw": [
-        "Profit/Nerve: ",
-        "Flamethrower: ",
-        "Evidence: ",
-        "Place: ",
         "Stoke: ",
         "Dampen: "
       ]
@@ -4294,26 +2799,6 @@ window.arsonRecipes = {
     }
   ],
   "It Cuts Both Ways": [
-    {
-      "payout": 19000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 19K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 2 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 20500,
       "igniter": "Flamethrower",
@@ -4383,26 +2868,6 @@ window.arsonRecipes = {
   ],
   "Kindling Spirits": [
     {
-      "payout": 64000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 64K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 92500,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -4468,26 +2933,6 @@ window.arsonRecipes = {
   ],
   "Letter of the Law": [
     {
-      "payout": 1000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Kerosene": 1
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout:1K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 1 Kerosene",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 360000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -4511,26 +2956,6 @@ window.arsonRecipes = {
     }
   ],
   "Light Fingered": [
-    {
-      "payout": 165000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 165K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 165000,
       "igniter": "Flamethrower",
@@ -4580,26 +3005,6 @@ window.arsonRecipes = {
   ],
   "Liquor on the Back Row": [
     {
-      "payout": 37000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 37K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 3 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 50000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -4619,26 +3024,6 @@ window.arsonRecipes = {
     }
   ],
   "Local Concerns": [
-    {
-      "payout": 20000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 20K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 3 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 30000,
       "igniter": "Flamethrower",
@@ -4777,27 +3162,6 @@ window.arsonRecipes = {
   ],
   "Make a Killing": [
     {
-      "payout": 260000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 1,
-        "Kerosene": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout:260K",
-        "Profit/Nerve: ",
-        "Flametrhower: No",
-        "Place: 1 Gasoline, 2 Kerosene",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 390000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -4820,26 +3184,6 @@ window.arsonRecipes = {
     }
   ],
   "Marked for Salvation": [
-    {
-      "payout": 30000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Hydrogen Tank": 1
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout:30K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 1 Hydrogen Tank ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 80000,
       "igniter": "Flamethrower",
@@ -4889,26 +3233,6 @@ window.arsonRecipes = {
     }
   ],
   "Marx & Sparks": [
-    {
-      "payout": 140000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 140K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 125000,
       "igniter": "Flamethrower",
@@ -5027,26 +3351,6 @@ window.arsonRecipes = {
   "Naked Aggression": [
     {
       "payout": 31500,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout:31.5K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
-      "payout": 31500,
       "igniter": "Flamethrower",
       "evidence": null,
       "place": {
@@ -5070,26 +3374,6 @@ window.arsonRecipes = {
   ],
   "Needles to Say": [
     {
-      "payout": 23000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 23K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 2 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 39000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -5112,26 +3396,6 @@ window.arsonRecipes = {
   ],
   "Not a Leg to Stand on": [
     {
-      "payout": 150000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 6
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 150K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 6 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 125000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -5153,26 +3417,6 @@ window.arsonRecipes = {
     }
   ],
   "Off the Market": [
-    {
-      "payout": 30000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Kerosene": 1
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 30K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 1 Kerosene",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 155000,
       "igniter": "Flamethrower",
@@ -5222,28 +3466,6 @@ window.arsonRecipes = {
   ],
   "Old School": [
     {
-      "payout": 62000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [
-        "Profit/Nerve: 2K"
-      ],
-      "raw": [
-        "Payout: 62K",
-        "Profit/Nerve: 2K",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 62500,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -5268,26 +3490,6 @@ window.arsonRecipes = {
   ],
   "On Fire at the Box Office": [
     {
-      "payout": 10000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Hydrogen Tank": 1
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 10K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 1 Hydrogen Tank",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 14000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -5309,28 +3511,6 @@ window.arsonRecipes = {
     }
   ],
   "One Rotten Apple": [
-    {
-      "payout": 180000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [
-        "Profit/Nerve: 8.5K"
-      ],
-      "raw": [
-        "Payout: 180K",
-        "Profit/Nerve: 8.5K",
-        "Flamethrower: No",
-        "Place: 3 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 180000,
       "igniter": "Flamethrower",
@@ -5379,26 +3559,6 @@ window.arsonRecipes = {
   "Out in the Wash": [
     {
       "payout": 235000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 235K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 3 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
-      "payout": 235000,
       "igniter": "Flamethrower",
       "evidence": null,
       "place": {
@@ -5442,28 +3602,6 @@ window.arsonRecipes = {
     }
   ],
   "Party Pooper": [
-    {
-      "payout": 58000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [
-        "Profit/Nerve: 2.3K"
-      ],
-      "raw": [
-        "Payout: 58K",
-        "Profit/Nerve: 2.3K",
-        "Flamethrower: No",
-        "Place: 3 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 62000,
       "igniter": "Flamethrower",
@@ -5523,26 +3661,6 @@ window.arsonRecipes = {
       "notes": [],
       "raw": [
         "Payout: 180K",
-        "Profit/Nerve: ",
-        "Flamethrower: Yes",
-        "Place: 2 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
-      "payout": 104000,
-      "igniter": "Flamethrower",
-      "evidence": null,
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 104K",
         "Profit/Nerve: ",
         "Flamethrower: Yes",
         "Place: 2 Gasoline ",
@@ -5652,26 +3770,6 @@ window.arsonRecipes = {
   ],
   "Political Firestorm": [
     {
-      "payout": 22000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 22K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 2 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 40000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -5713,26 +3811,6 @@ window.arsonRecipes = {
     }
   ],
   "Raising Hell": [
-    {
-      "payout": 170000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 6
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 170K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 6 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 170000,
       "igniter": "Flamethrower",
@@ -5805,26 +3883,6 @@ window.arsonRecipes = {
     }
   ],
   "Read the Room": [
-    {
-      "payout": 125000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 5
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 125K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 5 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 125000,
       "igniter": "Flamethrower",
@@ -5939,27 +3997,6 @@ window.arsonRecipes = {
       ]
     }
   ],
-  "Roast Beef": [
-    {
-      "payout": 120000,
-      "igniter": null,
-      "evidence": null,
-      "place": null,
-      "stoke": null,
-      "dampen": null,
-      "status": "incomplete",
-      "notes": [],
-      "raw": [
-        "Payout: 120K",
-        "Profit/Nerve: ",
-        "Flamethrower: ",
-        "Evidence: ",
-        "Place: ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    }
-  ],
   "Rock the Boat": [
     {
       "payout": 325000,
@@ -6027,26 +4064,6 @@ window.arsonRecipes = {
     }
   ],
   "See No Evil": [
-    {
-      "payout": 52000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 52K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 3 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 71000,
       "igniter": "Flamethrower",
@@ -6118,28 +4135,6 @@ window.arsonRecipes = {
   ],
   "Shielded from the Truth": [
     {
-      "payout": 8900,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 1
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [
-        "Profit/Nerve: 850"
-      ],
-      "raw": [
-        "Payout: 8.9K",
-        "Profit/Nerve: 850",
-        "Flamethrower: No",
-        "Place: 1 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 16000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -6182,49 +4177,7 @@ window.arsonRecipes = {
       ]
     }
   ],
-  "Sky High Prices": [
-    {
-      "payout": null,
-      "igniter": null,
-      "evidence": null,
-      "place": null,
-      "stoke": null,
-      "dampen": null,
-      "status": "incomplete",
-      "notes": [
-        "Evidence: Glitter Bomb"
-      ],
-      "raw": [
-        "Profit/Nerve: ",
-        "Flamethrower: ",
-        "Evidence: Glitter Bomb",
-        "Place: ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    }
-  ],
   "Smoke on the Water": [
-    {
-      "payout": 4200,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 1
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 4.2K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 1 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 8600,
       "igniter": "Flamethrower",
@@ -6344,24 +4297,6 @@ window.arsonRecipes = {
     }
   ],
   "Smoldering Resentment": [
-    {
-      "payout": null,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": null,
-      "stoke": null,
-      "dampen": null,
-      "status": "incomplete",
-      "notes": [],
-      "raw": [
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Evidence: ",
-        "Place: ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 10000,
       "igniter": "Flamethrower",
@@ -6502,26 +4437,6 @@ window.arsonRecipes = {
       ]
     }
   ],
-  "Stop, Drop and Lol": [
-    {
-      "payout": null,
-      "igniter": null,
-      "evidence": null,
-      "place": null,
-      "stoke": null,
-      "dampen": null,
-      "status": "incomplete",
-      "notes": [],
-      "raw": [
-        "Profit/Nerve: ",
-        "Flamethrower: ",
-        "Evidence: ",
-        "Place: ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    }
-  ],
   "Strike While it's Hot": [
     {
       "payout": 265000,
@@ -6549,25 +4464,6 @@ window.arsonRecipes = {
   "Stroke of Fortune": [
     {
       "payout": 120000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 6
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 120K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 6 Gasoline",
-        "Stoke: "
-      ]
-    },
-    {
-      "payout": 120000,
       "igniter": "Flamethrower",
       "evidence": null,
       "place": {
@@ -6589,28 +4485,6 @@ window.arsonRecipes = {
     }
   ],
   "Supermarket Sweep": [
-    {
-      "payout": 265000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 5
-      },
-      "stoke": {
-        "Lighter": 1
-      },
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 265K",
-        "Profit/Nerve:",
-        "Flamethrower: No",
-        "Place: 5 Gasoline",
-        "Stoke: 1 Lighter",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 265000,
       "igniter": "Flamethrower",
@@ -6681,26 +4555,6 @@ window.arsonRecipes = {
   ],
   "That Place Is History": [
     {
-      "payout": 90000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout:90K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 118500,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -6766,47 +4620,7 @@ window.arsonRecipes = {
       ]
     }
   ],
-  "The Bolted Horse": [
-    {
-      "payout": null,
-      "igniter": null,
-      "evidence": null,
-      "place": null,
-      "stoke": null,
-      "dampen": null,
-      "status": "incomplete",
-      "notes": [],
-      "raw": [
-        "Profit/Nerve: ",
-        "Flamethrower: ",
-        "Evidence: ",
-        "Place: ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    }
-  ],
   "The Declaration of Inebrience": [
-    {
-      "payout": 115000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 115K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 3 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 115000,
       "igniter": "Flamethrower",
@@ -6829,28 +4643,6 @@ window.arsonRecipes = {
     }
   ],
   "The Devil's in the Details": [
-    {
-      "payout": 73000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Diesel": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [
-        "Profit/Nerve: Negative"
-      ],
-      "raw": [
-        "Payout: 73K",
-        "Profit/Nerve: Negative",
-        "Flamethrower: No",
-        "Place: 3 Diesel",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 130000,
       "igniter": "Flamethrower",
@@ -6879,28 +4671,6 @@ window.arsonRecipes = {
     }
   ],
   "The Empyre Strikes Back": [
-    {
-      "payout": 49000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 5
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [
-        "Profit/Nerve: 1.8K"
-      ],
-      "raw": [
-        "Payout: 49K",
-        "Profit/Nerve: 1.8K",
-        "Flamethrower: No",
-        "Place: 5 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 49000,
       "igniter": "Flamethrower",
@@ -6950,26 +4720,6 @@ window.arsonRecipes = {
   ],
   "The Fire Chief": [
     {
-      "payout": 130000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 6
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 130K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 6 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 140000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -7017,28 +4767,6 @@ window.arsonRecipes = {
   "The Grass Ain't Greener": [
     {
       "payout": 85000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": {
-        "Diesel": 1
-      },
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 85K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: 1 Diesel",
-        "Dampen: "
-      ]
-    },
-    {
-      "payout": 85000,
       "igniter": "Flamethrower",
       "evidence": null,
       "place": {
@@ -7059,26 +4787,6 @@ window.arsonRecipes = {
     }
   ],
   "The Male Gaze": [
-    {
-      "payout": 130000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 130K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 110000,
       "igniter": "Flamethrower",
@@ -7102,26 +4810,6 @@ window.arsonRecipes = {
   ],
   "The Midnight Oil": [
     {
-      "payout": 63000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout:63K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 75000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -7143,26 +4831,6 @@ window.arsonRecipes = {
     }
   ],
   "The Plane Truth": [
-    {
-      "payout": 38000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 38K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 3 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 25000,
       "igniter": "Flamethrower",
@@ -7254,28 +4922,6 @@ window.arsonRecipes = {
   ],
   "Third-Degree Burn": [
     {
-      "payout": 25500,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [
-        "Profit/Nerve: 1.6K"
-      ],
-      "raw": [
-        "Payout: 25.5K",
-        "Profit/Nerve: 1.6K",
-        "Flamethrower: No",
-        "Place: 2 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 29000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -7322,26 +4968,6 @@ window.arsonRecipes = {
   ],
   "Totally Armless": [
     {
-      "payout": 44000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Kerosene": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 44K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 2 Kerosene",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 35000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -7363,27 +4989,6 @@ window.arsonRecipes = {
     }
   ],
   "Turn up the Heat": [
-    {
-      "payout": 90000,
-      "igniter": "Lighter",
-      "evidence": {
-        "Compass": 1
-      },
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 90K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Evidence: 1 Compass",
-        "Place: 4 Gasoline"
-      ]
-    },
     {
       "payout": 76000,
       "igniter": "Flamethrower",
@@ -7410,26 +5015,6 @@ window.arsonRecipes = {
   ],
   "Twisted Firestarter": [
     {
-      "payout": 32000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 32K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 3 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 23000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -7451,26 +5036,6 @@ window.arsonRecipes = {
     }
   ],
   "Uber Heats": [
-    {
-      "payout": 78000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 78K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 59000,
       "igniter": "Flamethrower",
@@ -7520,26 +5085,6 @@ window.arsonRecipes = {
   ],
   "Unpopular Mechanics": [
     {
-      "payout": 4500,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 1
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 4.5K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 1 Gasoline ",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 8600,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -7585,29 +5130,6 @@ window.arsonRecipes = {
     }
   ],
   "Visions of the Savory": [
-    {
-      "payout": 70000,
-      "igniter": "Lighter",
-      "evidence": {
-        "Family Photo": 1
-      },
-      "place": {
-        "Gasoline": 3
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 70K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Evidence: 1 Family Photo",
-        "Place: 3 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 110000,
       "igniter": "Flamethrower",
@@ -7656,26 +5178,6 @@ window.arsonRecipes = {
   ],
   "Wedded to the Lie": [
     {
-      "payout": 81000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 81K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 69000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -7698,26 +5200,6 @@ window.arsonRecipes = {
   ],
   "Wet Behind the Ears": [
     {
-      "payout": 240000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 240k",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 2 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
-    {
       "payout": 200000,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -7739,27 +5221,6 @@ window.arsonRecipes = {
     }
   ],
   "Where There's a Will": [
-    {
-      "payout": 23000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 2
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 23K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Evidence: ",
-        "Place: 2 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 52000,
       "igniter": "Flamethrower",
@@ -7830,24 +5291,6 @@ window.arsonRecipes = {
   ],
   "Womb With a View": [
     {
-      "payout": 95000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 95K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline"
-      ]
-    },
-    {
       "payout": 78500,
       "igniter": "Flamethrower",
       "evidence": null,
@@ -7867,26 +5310,6 @@ window.arsonRecipes = {
     }
   ],
   "Workplace Burnout": [
-    {
-      "payout": 100000,
-      "igniter": "Lighter",
-      "evidence": null,
-      "place": {
-        "Gasoline": 4
-      },
-      "stoke": null,
-      "dampen": null,
-      "status": "documented",
-      "notes": [],
-      "raw": [
-        "Payout: 100K",
-        "Profit/Nerve: ",
-        "Flamethrower: No",
-        "Place: 4 Gasoline",
-        "Stoke: ",
-        "Dampen: "
-      ]
-    },
     {
       "payout": 73000,
       "igniter": "Flamethrower",
