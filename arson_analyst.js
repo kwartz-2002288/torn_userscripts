@@ -152,29 +152,6 @@
             '</div>';
     }
 
-    // This displays only what the legacy database actually records.
-    function renderIncompleteRecipe(recipe) {
-        let html = "";
-        if (recipe.evidence) html += tooltipRow("Evidence", formatItems(recipe.evidence), true);
-        if (recipe.place) html += tooltipRow("Place", formatItems(recipe.place), true);
-        if (recipe.igniter) html += tooltipRow("Ignite", recipe.igniter, true);
-        if (recipe.stoke) html += tooltipRow("Stoke", formatItems(recipe.stoke), true);
-        if (recipe.dampen) html += tooltipRow("Dampen", formatItems(recipe.dampen), true);
-
-        // Retain partial legacy evidence and tentative "Try" hints.
-        // Display the igniter determined during recipe import.
-        if (recipe.notes) {
-            for (let note of recipe.notes) html += tooltipRow("Note", note, true);
-        }
-        if (recipe.payout != null) {
-            html += '<div style="border-top:1px solid #bbb;margin:6px 0"></div>';
-            html += tooltipRow("Payout", "$" + Number(recipe.payout).toLocaleString("en-US"));
-         }
-        if (!html) return "Recipe not documented";
-        return html + '<div style="border-top:1px solid #bbb;margin:6px 0"></div>' +
-            '<div style="color:#777">Incomplete recipe</div>';
-    }
-
     // Format an item map such as {Gasoline: 2} for display.
     function formatItems(items) {
 
@@ -478,16 +455,6 @@
                         tooltipHTML += recipeLine;
                     }
 
-                    // Incomplete recipes
-                    if (recipe.status === "incomplete" ||
-                        recipe.payout == null ||
-                        recipe.igniter == null ||
-                        !recipe.place) {
-
-                        tooltipHTML += renderIncompleteRecipe(recipe);
-                        continue;
-                    }
-
                     let totalCost = calculateRecipeCost(recipe);
                     let profitPerNerve = calculateProfitPerNerve(recipe);
 
@@ -603,105 +570,112 @@
         console.log(LOG_PREFIX, "Prices saved");
     });
 
-    // Create the profitability threshold settings button.
-    const settingsButton = document.createElement("button");
+    function createSettingsButton() {
 
-    settingsButton.textContent = "Settings";
-    styleButton(settingsButton);
+        const settingsButton = document.createElement("button");
+        settingsButton.textContent = "Settings";
+        styleButton(settingsButton);
 
-    // Create the settings panel
-    const settingsPanel = document.createElement("div");
-
-    settingsPanel.style.display = "none";
-    settingsPanel.style.position = "absolute";
-    settingsPanel.style.background = "white";
-    settingsPanel.style.color = "black";
-    settingsPanel.style.border = "1px solid #777";
-    settingsPanel.style.borderRadius = "4px";
-    settingsPanel.style.padding = "10px";
-    settingsPanel.style.zIndex = "10000";
-
-    settingsPanel.innerHTML = `
-    <div style="font-weight:bold; margin-bottom:8px;">
-        Profit/Nerve thresholds
-    </div>
-
-    <div>Threshold 1: <input type="number" value="1500" style="width:65px"></div>
-    <div>Threshold 2: <input type="number" value="3000" style="width:65px"></div>
-    <div>Threshold 3: <input type="number" value="5000" style="width:65px"></div>
-
-    <div style="margin-top:8px; text-align:right;">
-        <button id="arson-settings-save">Save</button>
-    </div>
-`;
-
-    document.body.appendChild(settingsPanel);
-
-    const thresholdInputs =
-        settingsPanel.querySelectorAll('input[type="number"]');
-
-    const threshold1Input = thresholdInputs[0];
-    const threshold2Input = thresholdInputs[1];
-    const threshold3Input = thresholdInputs[2];
-    threshold1Input.value = profitThreshold1;
-    threshold2Input.value = profitThreshold2;
-    threshold3Input.value = profitThreshold3;
-
-    const settingsSaveButton =
-        settingsPanel.querySelector("#arson-settings-save");
-    styleButton(settingsButton);
-
-    settingsSaveButton.addEventListener("click", function() {
-
-        let threshold1 = Number(threshold1Input.value);
-        let threshold2 = Number(threshold2Input.value);
-        let threshold3 = Number(threshold3Input.value);
-
-        if (!(threshold1 < threshold2 && threshold2 < threshold3)) {
-            alert("Thresholds must be in increasing order.");
-            return;
-        }
-
-        console.log(LOG_PREFIX, "Thresholds:", {
-            threshold1,
-            threshold2,
-            threshold3
-        });
-
-        profitThreshold1 = threshold1;
-        profitThreshold2 = threshold2;
-        profitThreshold3 = threshold3;
-        localStorage.setItem(
-            "arsonAnalyst.profitThreshold1",
-            profitThreshold1
-        );
-        localStorage.setItem(
-            "arsonAnalyst.profitThreshold2",
-            profitThreshold2
-        );
-        localStorage.setItem(
-            "arsonAnalyst.profitThreshold3",
-            profitThreshold3
-        );
-        processArsons();
+        const settingsPanel = document.createElement("div");
 
         settingsPanel.style.display = "none";
-    });
+        settingsPanel.style.position = "absolute";
+        settingsPanel.style.background = "white";
+        settingsPanel.style.color = "black";
+        settingsPanel.style.border = "1px solid #777";
+        settingsPanel.style.borderRadius = "4px";
+        settingsPanel.style.padding = "10px";
+        settingsPanel.style.zIndex = "10000";
 
-    settingsButton.addEventListener("click", function() {
+        settingsPanel.innerHTML = `
+        <div style="font-weight:bold; margin-bottom:8px;">
+            Profit/Nerve thresholds
+        </div>
 
-        if (settingsPanel.style.display === "none") {
+        <div>Threshold 1: <input type="number" style="width:65px"></div>
+        <div>Threshold 2: <input type="number" style="width:65px"></div>
+        <div>Threshold 3: <input type="number" style="width:65px"></div>
 
-            let rect = settingsButton.getBoundingClientRect();
+        <div style="margin-top:8px; text-align:right;">
+            <button id="arson-settings-save">Save</button>
+        </div>
+    `;
 
-            settingsPanel.style.left = rect.left + "px";
-            settingsPanel.style.top = (rect.bottom + 4) + "px";
-            settingsPanel.style.display = "block";
+        document.body.appendChild(settingsPanel);
 
-        } else {
+        const thresholdInputs =
+            settingsPanel.querySelectorAll('input[type="number"]');
+
+        const threshold1Input = thresholdInputs[0];
+        const threshold2Input = thresholdInputs[1];
+        const threshold3Input = thresholdInputs[2];
+
+        threshold1Input.value = profitThreshold1;
+        threshold2Input.value = profitThreshold2;
+        threshold3Input.value = profitThreshold3;
+
+        const settingsSaveButton =
+            settingsPanel.querySelector("#arson-settings-save");
+
+        styleButton(settingsSaveButton);
+
+        settingsSaveButton.addEventListener("click", function() {
+
+            let threshold1 = Number(threshold1Input.value);
+            let threshold2 = Number(threshold2Input.value);
+            let threshold3 = Number(threshold3Input.value);
+
+            if (!(threshold1 < threshold2 && threshold2 < threshold3)) {
+                alert("Thresholds must be in increasing order.");
+                return;
+            }
+
+            console.log(LOG_PREFIX, "Thresholds:", {
+                threshold1,
+                threshold2,
+                threshold3
+            });
+
+            profitThreshold1 = threshold1;
+            profitThreshold2 = threshold2;
+            profitThreshold3 = threshold3;
+
+            localStorage.setItem(
+                "arsonAnalyst.profitThreshold1",
+                profitThreshold1
+            );
+            localStorage.setItem(
+                "arsonAnalyst.profitThreshold2",
+                profitThreshold2
+            );
+            localStorage.setItem(
+                "arsonAnalyst.profitThreshold3",
+                profitThreshold3
+            );
+
+            processArsons();
             settingsPanel.style.display = "none";
-        }
-    });
+        });
+
+        settingsButton.addEventListener("click", function() {
+
+            if (settingsPanel.style.display === "none") {
+
+                let rect = settingsButton.getBoundingClientRect();
+
+                settingsPanel.style.left = rect.left + "px";
+                settingsPanel.style.top = (rect.bottom + 4) + "px";
+                settingsPanel.style.display = "block";
+
+            } else {
+                settingsPanel.style.display = "none";
+            }
+        });
+
+        return settingsButton;
+    }
+
+    const settingsButton = createSettingsButton();
     const updateDateLabel = document.createElement("span");
 
     updateDateLabel.style.marginLeft = "10px";
