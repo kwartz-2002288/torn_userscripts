@@ -387,6 +387,91 @@
     // Arson DOM processing and recipe tooltip
     // -------------------------------------------------------------------------
 
+    function showRecipeTooltip(arson, scenarioRecipes) {
+
+        let rect = arson.getBoundingClientRect();
+        let tooltipHTML = "";
+
+        const thinLine =
+            '<div style="border-top:1px solid #bbb;margin:6px 0"></div>';
+
+        const recipeLine =
+            '<div style="border-top:1px dashed #888;margin:10px 0"></div>';
+
+        for (let j = 0; j < scenarioRecipes.length; j++) {
+
+            let recipe = scenarioRecipes[j];
+
+            // Separator between recipes
+            if (j > 0) {
+                tooltipHTML += recipeLine;
+            }
+
+            let totalCost = calculateRecipeCost(recipe);
+            let profitPerNerve = calculateProfitPerNerve(recipe);
+
+            // Actions
+            if (recipe.evidence) {
+                tooltipHTML += tooltipRow(
+                    "Evidence", formatItems(recipe.evidence), true
+                );
+            }
+
+            tooltipHTML += tooltipRow(
+                "Place", formatItems(recipe.place), true
+            );
+
+            tooltipHTML += tooltipRow(
+                "Ignite", recipe.igniter, true
+            );
+
+            if (recipe.stoke) {
+                tooltipHTML += tooltipRow(
+                    "Stoke", formatItems(recipe.stoke), true
+                );
+            }
+
+            if (recipe.dampen) {
+                tooltipHTML += tooltipRow(
+                    "Dampen", formatItems(recipe.dampen), true
+                );
+            }
+
+            // Results
+            tooltipHTML += thinLine;
+
+            tooltipHTML += tooltipRow(
+                "Nerve",
+                calculateNerve(recipe)
+            );
+
+            tooltipHTML += tooltipRow(
+                "Payout",
+                "$" + recipe.payout.toLocaleString("en-US")
+            );
+
+            tooltipHTML += tooltipRow(
+                "Items Cost",
+                Number.isFinite(totalCost)
+                    ? "$" + totalCost.toLocaleString("en-US")
+                    : "Price unavailable"
+            );
+
+            tooltipHTML += tooltipRow(
+                "Profit/Nerve",
+                Number.isFinite(profitPerNerve)
+                    ? "$" + Math.round(profitPerNerve).toLocaleString("en-US")
+                    : "Unavailable"
+            );
+        }
+
+        tooltip.innerHTML = tooltipHTML;
+
+        tooltip.style.left = rect.left + "px";
+        tooltip.style.top = (rect.bottom + 5) + "px";
+        tooltip.style.display = "block";
+    }
+
     // Process Arson elements currently present in the DOM. Torn virtualizes the
     // mission list, so this function is intentionally safe to call repeatedly.
     function processArsons() {
@@ -434,90 +519,8 @@
                 if (!recipes[scenario]) {
                     return;
                 }
-                let scenarioRecipes = recipes[scenario];
 
-                let rect = arsons[i].getBoundingClientRect();
-
-                let tooltipHTML = "";
-
-                const thinLine =
-                    '<div style="border-top:1px solid #bbb;margin:6px 0"></div>';
-
-                const recipeLine =
-                    '<div style="border-top:1px dashed #888;margin:10px 0"></div>';
-
-                for (let j = 0; j < scenarioRecipes.length; j++) {
-
-                    let recipe = scenarioRecipes[j];
-
-                    // Separator between recipes
-                    if (j > 0) {
-                        tooltipHTML += recipeLine;
-                    }
-
-                    let totalCost = calculateRecipeCost(recipe);
-                    let profitPerNerve = calculateProfitPerNerve(recipe);
-
-                    // Actions
-                    if (recipe.evidence) {
-                        tooltipHTML += tooltipRow(
-                            "Evidence", formatItems(recipe.evidence), true
-                        );
-                    }
-
-                    tooltipHTML += tooltipRow(
-                        "Place", formatItems(recipe.place), true
-                    );
-
-                    tooltipHTML += tooltipRow(
-                        "Ignite", recipe.igniter, true
-                    );
-
-                    if (recipe.stoke) {
-                        tooltipHTML += tooltipRow(
-                            "Stoke", formatItems(recipe.stoke), true
-                        );
-                    }
-
-                    if (recipe.dampen) {
-                        tooltipHTML += tooltipRow(
-                            "Dampen", formatItems(recipe.dampen), true
-                        );
-                    }
-
-                    // Results
-                    tooltipHTML += thinLine;
-
-                    tooltipHTML += tooltipRow(
-                        "Nerve",
-                        calculateNerve(recipe)
-                    );
-
-                    tooltipHTML += tooltipRow(
-                        "Payout",
-                        "$" + recipe.payout.toLocaleString("en-US")
-                    );
-
-                    tooltipHTML += tooltipRow(
-                        "Items Cost",
-                        Number.isFinite(totalCost)
-                            ? "$" + totalCost.toLocaleString("en-US")
-                            : "Price unavailable"
-                    );
-
-                    tooltipHTML += tooltipRow(
-                        "Profit/Nerve",
-                        Number.isFinite(profitPerNerve)
-                            ? "$" + Math.round(profitPerNerve).toLocaleString("en-US")
-                            : "Unavailable"
-                    );
-                }
-
-                tooltip.innerHTML = tooltipHTML;
-
-                tooltip.style.left = rect.left + "px";
-                tooltip.style.top = (rect.bottom + 5) + "px";
-                tooltip.style.display = "block";
+                showRecipeTooltip(arsons[i], recipes[scenario]);
             });
 
             arsons[i].addEventListener("mouseleave", function() {
