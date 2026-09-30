@@ -1,6 +1,6 @@
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.16";
+    const SCRIPT_VERSION = "0.17";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     console.log(LOG_PREFIX, "Userscript loaded");
 
@@ -586,7 +586,7 @@
     const updateButton = document.createElement("button");
 
     updateButton.id = "arson-analyst-update";
-    updateButton.textContent = "Update the prices";
+    updateButton.textContent = "Update item prices";
     styleButton(updateButton);
     updateButton.style.marginLeft = "10px";
     updateButton.addEventListener("click", async function() {
