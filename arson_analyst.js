@@ -1,16 +1,7 @@
-// ==UserScript==
-// @name         Arson Analyst
-// @namespace    torn
-// @version      0.1
-// @description  Analyze Arson recipes, costs and profitability
-// @match        https://www.torn.com/page.php?sid=crimes*
-// @grant        none
-// ==/UserScript==
-
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.14";
-    const LOG_PREFIX = `[Arson Analyst Clean ${SCRIPT_VERSION}]`;
+    const SCRIPT_VERSION = "0.15";
+    const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     console.log(LOG_PREFIX, "Userscript loaded");
 
     // -------------------------------------------------------------------------
@@ -32,12 +23,20 @@
     let itemPrices = JSON.parse(storedPrices);
     let pendingCollect = null;
     let previousResults = [];
-    let profitThreshold1 =
-        Number(localStorage.getItem("arsonAnalyst.profitThreshold1")) || 1500;
-    let profitThreshold2 =
-        Number(localStorage.getItem("arsonAnalyst.profitThreshold2")) || 3000;
-    let profitThreshold3 =
-        Number(localStorage.getItem("arsonAnalyst.profitThreshold3")) || 5000;
+    const defaultProfitThresholds = {
+        low: 1000,
+        medium: 3000,
+        high: 6000
+    };
+
+    let profitThresholds = {
+        low: Number(localStorage.getItem("arsonAnalyst.profitThresholdLow")) ||
+            defaultProfitThresholds.low,
+        medium: Number(localStorage.getItem("arsonAnalyst.profitThresholdMedium")) ||
+            defaultProfitThresholds.medium,
+        high: Number(localStorage.getItem("arsonAnalyst.profitThresholdHigh")) ||
+            defaultProfitThresholds.high
+    };
 
     console.log(LOG_PREFIX, " Item prices:", itemPrices);
 
@@ -106,7 +105,7 @@
 
         const date = new Date(Number(timestamp));
 
-        return "Last price update: " + date.toLocaleString("en-GB", {
+        return "Prices updated: " + date.toLocaleString("en-GB", {
             timeZone: "UTC",
             day: "2-digit",
             month: "short",
@@ -123,6 +122,11 @@
             localStorage.getItem("arsonAnalyst.pricesLastUpdate")
         )
     );
+
+    function styleInfoLabel(label) {
+        label.style.fontSize = "11px";
+        label.style.opacity = "0.8";
+    }
 
     // -------------------------------------------------------------------------
     // Tooltip formatting helpers
@@ -287,16 +291,15 @@
             return;
         }
 
-        if (profitPerNerve <= profitThreshold1) {
+        if (profitPerNerve <= profitThresholds.low) {
             element.style.backgroundColor = "rgba(100, 45, 45, 0.55)";
-        } else if (profitPerNerve <= profitThreshold2) {
+        } else if (profitPerNerve <= profitThresholds.medium) {
             element.style.backgroundColor = "rgba(125, 105, 35, 0.45)";
-        } else if (profitPerNerve <= profitThreshold3) {
+        } else if (profitPerNerve <= profitThresholds.high) {
             element.style.backgroundColor = "rgba(45, 105, 55, 0.45)";
         } else {
             element.style.backgroundColor = "rgba(55, 145, 65, 0.55)";
-        }
-    }
+        }    }
 
     function updateArsonRowColor(arson) {
 
@@ -540,7 +543,45 @@
         button.style.borderRadius = "4px";
         button.style.padding = "3px 8px";
         button.style.cursor = "pointer";
+        button.style.fontSize = "11px";
     }
+// Display the running script version on the Arson page.
+    const flameStyle = document.createElement("style");
+
+    flameStyle.textContent = `
+@keyframes arsonFlameFlicker {
+    0%, 100% {
+        transform: scale(1, 1);
+    }
+    50% {
+        transform: scale(0.94, 1.08);
+    }
+}
+
+.arson-analyst-flame {
+    transform-origin: 50% 100%;
+    animation: arsonFlameFlicker 1.1s ease-in-out infinite;
+}
+`;
+
+    document.head.appendChild(flameStyle);
+    const logoData = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAWCAYAAADAQbwGAAAEp0lEQVR4nJ2VWUyUVxiG3+/8/8/ADDMsiiziICAii4gLqCwyuJSWahfjWCXRQLAaY+JSY9O06khs0tbGJnpRtVp7w4UZS2oaKheWACWltSIurRFEBaQiYgUHOsDMv3y9kFrTaGn7Xp+873Pe7+R8wDhaE4QYAAQALkCMd/65chVABoB92QE7anYlny+aak0GAJfrf5o+pmEqScDM0T0zuPmDXT3z0tKmMDP9E+nz01IhE4htCYjxNLUac65ci965NPQTIuJ9bjf9N7oCyGO1BdeW4DxnBxvtgWb/9ZIodUUipgH07/t0OyEBhNfsmFu3Ci2cp3CPJUD9CdLocLGJPy7Eur9Cx7my2wlp9WnS92bwug9fsn3vCJg523OR1F9HVTKTgSCTyooGi8sF4RiPjAiQBGFLnOTofDuWufqg7psV5etWoLWANG801IF1xJvi4ACA5o1QMNbLMwn32hGqG4QVmfr2OLMdmrta5YFeOdBOFBsGNqeS3GXw9da7gdq2GZbt8z6Dyq5nGDoBCQBpgcg8sIRrDQumoeUiG3V1kjyZ2JbFsFoZCAGLSGFq0Mwdy8sK363aGvkpVYCZIZ4mFU4nQAB3Gxheb8PiRw+R4p3uYzmMiO0EKZ0gp5DQu1hP70dCZVH/F4qv587KCH3z8ZdxiAiG2/nULMYSAr4pRmO/Ddqt3SF+79EgXV0KTS2FplWH6eohSfevId2fI2mD2cS9a8GPouDrLSUuS8F8Bp48dkEEo7IYR4tFcJ6hKIbdFyaZL/ogvwCSX5xNnJkGTNehLGEopaFkLc/SpHOk+z3CiBwCL4oXhQSwo2DMcPc8rFk+dUIZEnNVW4wm6PodfDdqQlXnDAzOTQNMnZBT43G5TcKpq5HoDb8vQmYzheRDAjHutRqxKQiMq3fAcAFC5E/BzpA+jX2xEiklk+iCbMD/6gmkbzqJmv2VkCcWoaPZglZRjvz3qnH2cA+U8ngEbIiW7w3DF744/ZVtK2NKKypgOFwFQkQIJPPoEEklAWI0YwhtUhoWLhtActIP8FsWYuTSTbSc9WDB+iREB59CxLJluKZ6gaQRDglTxKaM36dM9HSFAoADDRDaCIY5S2ZZO8cNZ0aQvSUezZWH8O3xY8hZa8OJogZMyJgMxVuNk9sPIN/JuPR1P/DbIMyswmjqRMd9vQ0A6usB0daFGpEAetjo1Qc84UiJaodJVxEdoiPRfAt9KTZkZz4Cd3YgMTUcoSOtsIXa0F6tGdgWLF0RYvDLX/AVEVDfAINyAfuxMuWCJT9q0gMv+/p/vC/fa1RpJADI2RgBa5od/vZu1B/pg0UHbLNMPDXbqlOsRSTZhHywrGPDnof0uXsVS6tPQycIwgaDF7y5MbIqaH5cjO65jcw8Xffe8Bu1NcOQWUCFgUUrJyAs1EOXm2Q5MH0mAgclnHn/0js7bvo+cjsfmwEY+5mJYAaiqsozD948t+TOgxu5zMOvMxvFzOpmZt7K7CvkoRuRfLdpjqd2f+6ZN4AcAOC/rYQny6dCwIABAAh/K9Wal7LQlmWLsccrljCr4enxeft+7um+bbp6pG648S7QDgDshER/ko3pD5Us76HkDma3AAAAAElFTkSuQmCC";
+    const versionLabel = document.createElement("span");
+    versionLabel.innerHTML = `
+<img src="${logoData}"
+     width="28"
+     height="30"
+     class="arson-analyst-flame"
+     style="margin-right:3px;"
+     title="Arson Analyst by kwartz"
+     alt="Arson Analyst">
+    v${SCRIPT_VERSION}
+`;
+
+    styleInfoLabel(versionLabel);
+    versionLabel.style.display = "inline-flex";
+    versionLabel.style.alignItems = "center";
+
     // Create the update prices button.
     const updateButton = document.createElement("button");
 
@@ -576,7 +617,7 @@
     function createSettingsButton() {
 
         const settingsButton = document.createElement("button");
-        settingsButton.textContent = "Settings";
+        settingsButton.textContent = "Color thresholds";
         styleButton(settingsButton);
 
         const settingsPanel = document.createElement("div");
@@ -592,68 +633,77 @@
 
         settingsPanel.innerHTML = `
         <div style="font-weight:bold; margin-bottom:8px;">
-            Profit/Nerve thresholds
+            Profit/Nerve color thresholds
         </div>
 
-        <div>Threshold 1: <input type="number" style="width:65px"></div>
-        <div>Threshold 2: <input type="number" style="width:65px"></div>
-        <div>Threshold 3: <input type="number" style="width:65px"></div>
+        <div>Low: <input id="threshold-low" type="number" step="500" style="width:65px"></div>
+        <div>Medium: <input id="threshold-medium" type="number" step="500" style="width:65px"></div>
+        <div>High: <input id="threshold-high" type="number" step="500" style="width:65px"></div>
 
         <div style="margin-top:8px; text-align:right;">
+            <button id="arson-settings-defaults">Defaults</button>
             <button id="arson-settings-save">Save</button>
         </div>
     `;
 
         document.body.appendChild(settingsPanel);
 
-        const thresholdInputs =
-            settingsPanel.querySelectorAll('input[type="number"]');
+        const lowInput =
+            settingsPanel.querySelector("#threshold-low");
+        const mediumInput =
+            settingsPanel.querySelector("#threshold-medium");
+        const highInput =
+            settingsPanel.querySelector("#threshold-high");
 
-        const threshold1Input = thresholdInputs[0];
-        const threshold2Input = thresholdInputs[1];
-        const threshold3Input = thresholdInputs[2];
-
-        threshold1Input.value = profitThreshold1;
-        threshold2Input.value = profitThreshold2;
-        threshold3Input.value = profitThreshold3;
-
+        const settingsDefaultsButton =
+            settingsPanel.querySelector("#arson-settings-defaults");
         const settingsSaveButton =
             settingsPanel.querySelector("#arson-settings-save");
 
+        styleButton(settingsDefaultsButton);
         styleButton(settingsSaveButton);
+
+        function displayThresholds(thresholds) {
+            lowInput.value = thresholds.low;
+            mediumInput.value = thresholds.medium;
+            highInput.value = thresholds.high;
+        }
+
+        displayThresholds(profitThresholds);
+
+        settingsDefaultsButton.addEventListener("click", function() {
+            displayThresholds(defaultProfitThresholds);
+        });
 
         settingsSaveButton.addEventListener("click", function() {
 
-            let threshold1 = Number(threshold1Input.value);
-            let threshold2 = Number(threshold2Input.value);
-            let threshold3 = Number(threshold3Input.value);
+            const thresholds = {
+                low: Number(lowInput.value),
+                medium: Number(mediumInput.value),
+                high: Number(highInput.value)
+            };
 
-            if (!(threshold1 < threshold2 && threshold2 < threshold3)) {
+            if (!(thresholds.low < thresholds.medium &&
+                thresholds.medium < thresholds.high)) {
                 alert("Thresholds must be in increasing order.");
                 return;
             }
 
-            console.log(LOG_PREFIX, "Thresholds:", {
-                threshold1,
-                threshold2,
-                threshold3
-            });
+            console.log(LOG_PREFIX, "Thresholds:", thresholds);
 
-            profitThreshold1 = threshold1;
-            profitThreshold2 = threshold2;
-            profitThreshold3 = threshold3;
+            profitThresholds = thresholds;
 
             localStorage.setItem(
-                "arsonAnalyst.profitThreshold1",
-                profitThreshold1
+                "arsonAnalyst.profitThresholdLow",
+                String(profitThresholds.low)
             );
             localStorage.setItem(
-                "arsonAnalyst.profitThreshold2",
-                profitThreshold2
+                "arsonAnalyst.profitThresholdMedium",
+                String(profitThresholds.medium)
             );
             localStorage.setItem(
-                "arsonAnalyst.profitThreshold3",
-                profitThreshold3
+                "arsonAnalyst.profitThresholdHigh",
+                String(profitThresholds.high)
             );
 
             processArsons();
@@ -664,6 +714,7 @@
 
             if (settingsPanel.style.display === "none") {
 
+                displayThresholds(profitThresholds);
                 let rect = settingsButton.getBoundingClientRect();
 
                 settingsPanel.style.left = rect.left + "px";
@@ -680,9 +731,7 @@
 
     const settingsButton = createSettingsButton();
     const updateDateLabel = document.createElement("span");
-
-    updateDateLabel.style.marginLeft = "10px";
-    updateDateLabel.style.fontSize = "11px";
+    styleInfoLabel(updateDateLabel);
 
     const lastUpdate = localStorage.getItem(
         "arsonAnalyst.pricesLastUpdate"
@@ -698,7 +747,12 @@
     updateControls.style.alignItems = "center";
     updateControls.style.gap = "8px";
 
-    updateControls.append(updateDateLabel, updateButton, settingsButton);
+    updateControls.append(
+        versionLabel,
+        updateButton,
+        updateDateLabel,
+        settingsButton
+    );
 
 
     // -------------------------------------------------------------------------
