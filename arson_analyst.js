@@ -586,7 +586,7 @@
     const updateButton = document.createElement("button");
 
     updateButton.id = "arson-analyst-update";
-    updateButton.textContent = "Update prices";
+    updateButton.textContent = "Update the prices";
     styleButton(updateButton);
     updateButton.style.marginLeft = "10px";
     updateButton.addEventListener("click", async function() {
