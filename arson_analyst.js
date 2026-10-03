@@ -1,14 +1,40 @@
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.17";
+    const SCRIPT_VERSION = "0.18";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     console.log(LOG_PREFIX, "Userscript loaded");
+
+
+// Validate a Torn API key and check its access level
+    async function validateApiKey(apiKey) {
+        const response = await fetch(
+            `https://api.torn.com/v2/key/info?key=${encodeURIComponent(apiKey)}`
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.error) {
+            throw new Error(data.error.error || "Invalid API key");
+        }
+
+        const level = data.info?.access?.level;
+
+        if (typeof level !== "number" || level < 1) {
+            throw new Error("API key requires Public Only access or higher");
+        }
+
+        return data.info;
+    }
 
     // -------------------------------------------------------------------------
     // Configuration and persistent state
     // -------------------------------------------------------------------------
 
-    // Recipe database loaded by arson_recipes.js.
+    // Recipes database loaded by arson_recipes.js.
     const recipes = window.arsonRecipes;
 
     const igniters = [
@@ -66,15 +92,15 @@
     // Fetch current market prices for every consumable used by the recipe database.
     async function fetchItemPrices() {
 
-        const apiKey = localStorage.getItem("tornApiKey");
+        const apiKey = localStorage.getItem("arsonAnalyst.apiKey");
 
         const wantedIds = [
             45, 54, 172, 196, 200, 201, 220,
             221, 259, 265, 275, 278, 280, 358,
             407, 427, 742, 833, 1085, 1089, 1094,
-            1219, 1248, 1264, 1272, 1282, 1286,
-            1294, 1457, 1458, 1459, 1460, 1461,
-            1462, 1463
+            1219, 1235, 1248, 1264, 1272, 1282,
+            1286, 1294, 1457, 1458, 1459, 1460,
+            1461, 1462, 1463
         ];
         const response = await fetch(
             "https://api.torn.com/v2/torn/" +
@@ -210,8 +236,13 @@
         if (recipe.stoke)
             cost += calculateItemsCost(recipe.stoke);
 
-        if (recipe.dampen)
-            cost += calculateItemsCost(recipe.dampen);
+        if (recipe.dampen) {
+            for (const [item, quantity] of Object.entries(recipe.dampen)) {
+                if (item !== "Blanket") {
+                    cost += calculateItemsCost({ [item]: quantity });
+                }
+            }
+        }
 
         if (recipe.evidence)
             cost += calculateItemsCost(recipe.evidence);
@@ -492,6 +523,10 @@
 
                 if (!updateButton.isConnected) {
                     titles[i].after(updateControls);
+
+                    if (!localStorage.getItem("arsonAnalyst.apiKey")) {
+                        settingsButton.click();
+                    }
                 }
 
                 break;
@@ -617,7 +652,7 @@
     function createSettingsButton() {
 
         const settingsButton = document.createElement("button");
-        settingsButton.textContent = "Color thresholds";
+        settingsButton.textContent = "Settings";
         styleButton(settingsButton);
 
         const settingsPanel = document.createElement("div");
@@ -632,19 +667,36 @@
         settingsPanel.style.zIndex = "10000";
 
         settingsPanel.innerHTML = `
-        <div style="font-weight:bold; margin-bottom:8px;">
-            Profit/Nerve color thresholds
-        </div>
+    <div style="font-weight:bold; margin-bottom:8px;">
+        API key
+    </div>
 
-        <div>Low: <input id="threshold-low" type="number" step="500" style="width:65px"></div>
-        <div>Medium: <input id="threshold-medium" type="number" step="500" style="width:65px"></div>
-        <div>High: <input id="threshold-high" type="number" step="500" style="width:65px"></div>
+    <div>
+        <input id="arson-api-key"
+               type="text"
+               placeholder="Enter a valid Torn API key"
+               style="width:180px; padding:3px 5px; 
+               border:1px solid #777; border-radius:3px; background:#fff;">
+    </div>
+    <div style="font-size:11px; margin-top:3px; opacity:0.75;">
+        Edit and Save to change key<br>
+        Public Only access is sufficient
+    </div>
 
-        <div style="margin-top:8px; text-align:right;">
-            <button id="arson-settings-defaults">Defaults</button>
-            <button id="arson-settings-save">Save</button>
-        </div>
-    `;
+
+    <div style="font-weight:bold; margin-top:12px; margin-bottom:8px;">
+        Profit/Nerve color thresholds
+    </div>
+
+    <div>Low: <input id="threshold-low" type="number" step="500" style="width:65px"></div>
+    <div>Medium: <input id="threshold-medium" type="number" step="500" style="width:65px"></div>
+    <div>High: <input id="threshold-high" type="number" step="500" style="width:65px"></div>
+
+    <div style="margin-top:8px; text-align:right;">
+        <button id="arson-settings-defaults">Defaults</button>
+        <button id="arson-settings-save">Save</button>
+    </div>
+`;
 
         document.body.appendChild(settingsPanel);
 
@@ -654,7 +706,8 @@
             settingsPanel.querySelector("#threshold-medium");
         const highInput =
             settingsPanel.querySelector("#threshold-high");
-
+        const apiKeyInput =
+            settingsPanel.querySelector("#arson-api-key");
         const settingsDefaultsButton =
             settingsPanel.querySelector("#arson-settings-defaults");
         const settingsSaveButton =
@@ -668,14 +721,30 @@
             mediumInput.value = thresholds.medium;
             highInput.value = thresholds.high;
         }
-
+        apiKeyInput.value =
+            localStorage.getItem("arsonAnalyst.apiKey") || "";
         displayThresholds(profitThresholds);
 
         settingsDefaultsButton.addEventListener("click", function() {
             displayThresholds(defaultProfitThresholds);
         });
 
-        settingsSaveButton.addEventListener("click", function() {
+        settingsSaveButton.addEventListener("click", async function() {
+            const apiKey = apiKeyInput.value.trim();
+
+            if (!apiKey) {
+                alert("A Torn API key is required.");
+                return;
+            }
+
+            try {
+                await validateApiKey(apiKey);
+            } catch (error) {
+                alert(`API key validation failed:\n${error.message}`);
+                return;
+            }
+
+            localStorage.setItem("arsonAnalyst.apiKey", apiKey);
 
             const thresholds = {
                 low: Number(lowInput.value),
