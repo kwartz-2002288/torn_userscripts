@@ -1,6 +1,6 @@
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.19";
+    const SCRIPT_VERSION = "0.20";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     console.log(LOG_PREFIX, "Userscript loaded");
 
@@ -753,7 +753,8 @@
             }
 
             localStorage.setItem("arsonAnalyst.apiKey", apiKey);
-            settingsPanel.style.border = "1px solid #777";
+            settingsPanel.style.border = "1px solid #777";// Refresh item prices after saving a valid API key
+            updateButton.click();
 
             const thresholds = {
                 low: Number(lowInput.value),
