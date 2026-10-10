@@ -1,6 +1,6 @@
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.20";
+    const SCRIPT_VERSION = "0.21";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     console.log(LOG_PREFIX, "Userscript loaded");
 
@@ -684,7 +684,7 @@
     </div>
     <div style="font-size:11px; margin-top:3px; opacity:0.75;">
         Edit and Save to change key<br>
-        Public Only access is sufficient
+        "Public Only" API key is sufficient
     </div>
 
 
