@@ -5984,7 +5984,7 @@ window.arsonRecipes = {
               return;
             }
 
-            showRecipeTooltip(arsons[i], recipes[scenario]);
+            showRecipeTooltip(crimeOption, recipes[scenario]);
             tooltip.dataset.scenario = scenario;
           });
         }
