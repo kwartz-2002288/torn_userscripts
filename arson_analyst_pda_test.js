@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Arson Analyst PDA Test
 // @namespace    torn
-// @version      0.21-pda-test
+// @version      0.21.1
 // @description  Standalone Arson Analyst build for Torn PDA compatibility testing
 // @match        https://www.torn.com/page.php?sid=crimes*
 // @grant        none
