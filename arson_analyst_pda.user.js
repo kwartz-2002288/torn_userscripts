@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Arson Analyst PDA
 // @namespace    torn
-// @version      0.23
+// @version      0.24
 // @description  Arson Analyst standalone build for Torn PDA
 // @match        https://www.torn.com/page.php?sid=crimes*
 // @grant        none
@@ -5372,7 +5372,7 @@ window.arsonRecipes = {
 
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.23";
+    const SCRIPT_VERSION = "0.24";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     console.log(LOG_PREFIX, "Userscript loaded");
 
@@ -5780,6 +5780,17 @@ window.arsonRecipes = {
         collectButton.dataset.arsonCollectProcessed = "true";
 
         collectButton.addEventListener("click", function() {
+            previousResults = getArsonResults();
+
+            if (
+                tooltip.arsonAnchor &&
+                crimeOption.contains(tooltip.arsonAnchor)
+            ) {
+                tooltip.style.display = "none";
+                tooltip.dataset.scenario = "";
+                tooltip.arsonAnchor = null;
+            }
+
             previousResults = getArsonResults();
 
             pendingCollect = {
@@ -6314,6 +6325,16 @@ window.arsonRecipes = {
 
     // Torn creates, removes and replaces mission elements dynamically.
     const observer = new MutationObserver(function() {
+
+        if (
+            tooltip.arsonAnchor &&
+            !tooltip.arsonAnchor.isConnected
+        ) {
+            tooltip.style.display = "none";
+            tooltip.dataset.scenario = "";
+            tooltip.arsonAnchor = null;
+        }
+
         processArsons();
 
         if (pendingCollect) {
