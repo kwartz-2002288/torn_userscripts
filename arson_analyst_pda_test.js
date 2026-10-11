@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Arson Analyst PDA Test
 // @namespace    torn
-// @version      0.21.3
+// @version      0.21.4
 // @description  Standalone Arson Analyst build for Torn PDA compatibility testing
 // @match        https://www.torn.com/page.php?sid=crimes*
 // @grant        none
@@ -5371,7 +5371,7 @@ window.arsonRecipes = {
 
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.21.3";
+    const SCRIPT_VERSION = "0.21.4";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     console.log(LOG_PREFIX, "Userscript loaded");
 
@@ -5969,10 +5969,13 @@ window.arsonRecipes = {
 
           crimeOption?.addEventListener("click", function() {
 
-            alert(
-                "children: " + arsons[i].children.length +
-                "\ntext: " + arsons[i].textContent
-            );
+            let scenario = arsons[i].children[1].textContent;
+
+            if (!recipes[scenario]) {
+              return;
+            }
+
+            showRecipeTooltip(arsons[i], recipes[scenario]);
           });
         }
     }
