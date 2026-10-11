@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Arson Analyst
 // @namespace    torn
-// @version      0.30
+// @version      0.31
 // @description  Arson Analyst standalone build
 // @match        https://www.torn.com/page.php?sid=crimes*
 // @grant        none
@@ -5372,7 +5372,7 @@ window.arsonRecipes = {
 
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.30";
+    const SCRIPT_VERSION = "0.31";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     console.log(LOG_PREFIX, "Userscript loaded");
 
@@ -6106,6 +6106,44 @@ window.arsonRecipes = {
     versionLabel.style.display = "inline-flex";
     versionLabel.style.alignItems = "center";
 
+    function showUpdateNotice() {
+
+        const notice = document.createElement("div");
+
+        notice.style.position = "fixed";
+        notice.style.left = "33%";
+        notice.style.top = "25%";
+        notice.style.transform = "translate(-50%, -50%)";
+        notice.style.background = "white";
+        notice.style.color = "black";
+        notice.style.border = "1px solid #777";
+        notice.style.borderRadius = "5px";
+        notice.style.padding = "12px 16px";
+        notice.style.zIndex = "10001";
+        notice.style.boxShadow = "0 2px 8px rgba(0,0,0,0.35)";
+        notice.style.minWidth = "200px";
+
+        notice.innerHTML = `
+        <div style="font-weight:bold; margin-bottom:6px;">
+            Item prices updated
+        </div>
+        <div style="font-size:11px; margin-bottom:12px;">
+            ${formatUpdateDate(Date.now())}
+        </div>
+        <div style="text-align:right;">
+            <button>OK</button>
+        </div>
+    `;
+
+        const okButton = notice.querySelector("button");
+        styleButton(okButton);
+
+        okButton.addEventListener("click", function() {
+            notice.remove();
+        });
+
+        document.body.appendChild(notice);
+    }
     // Create the update prices button.
     const updateButton = document.createElement("button");
 
@@ -6134,16 +6172,8 @@ window.arsonRecipes = {
         updateDateLabel.textContent = formatUpdateDate(
             localStorage.getItem("arsonAnalyst.pricesLastUpdate")
         );
-        const normalUpdateText =
-            window.matchMedia("(hover: hover)").matches
-                ? "Update item prices"
-                : "Update";
 
-        updateButton.textContent = "Updated ✓";
-
-        setTimeout(function() {
-            updateButton.textContent = normalUpdateText;
-        }, 2000);
+        showUpdateNotice();
 
         console.log(LOG_PREFIX, "New prices:", newPrices);
         console.log(LOG_PREFIX, "Prices saved");
@@ -6234,7 +6264,11 @@ window.arsonRecipes = {
         });
 
         settingsSaveButton.addEventListener("click", async function() {
+
             const apiKey = apiKeyInput.value.trim();
+
+            const isFirstSetup =
+                localStorage.getItem("arsonAnalyst.apiKey") === null;
 
             if (!apiKey) {
                 alert("A Torn API key is required.");
@@ -6249,8 +6283,7 @@ window.arsonRecipes = {
             }
 
             localStorage.setItem("arsonAnalyst.apiKey", apiKey);
-            settingsPanel.style.border = "1px solid #777";// Refresh item prices after saving a valid API key
-            updateButton.click();
+            settingsPanel.style.border = "1px solid #777";
 
             const thresholds = {
                 low: Number(lowInput.value),
@@ -6281,6 +6314,11 @@ window.arsonRecipes = {
                 String(profitThresholds.high)
             );
 
+// Fetch item prices automatically during the first setup.
+            if (isFirstSetup) {
+                updateButton.click();
+            }
+            
             processArsons();
             settingsPanel.style.display = "none";
         });
