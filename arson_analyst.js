@@ -1,6 +1,6 @@
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.25";
+    const SCRIPT_VERSION = "0.26";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     console.log(LOG_PREFIX, "Userscript loaded");
 
@@ -938,6 +938,13 @@
     updateControls.style.display = "flex";
     updateControls.style.alignItems = "center";
     updateControls.style.gap = "8px";
+
+    if (!window.matchMedia("(hover: hover)").matches) {
+        updateControls.style.gap = "4px";
+        updateButton.textContent = "Update";
+        updateDateLabel.style.fontSize = "9px";
+        settingsButton.textContent = "Settings";
+    }
 
     updateControls.append(
         versionLabel,
