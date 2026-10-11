@@ -8,7 +8,7 @@ cat > "$OUTPUT" <<'EOF'
 // ==UserScript==
 // @name         Arson Analyst
 // @namespace    torn
-// @version      0.25
+// @version      0.27
 // @description  Arson Analyst standalone build
 // @match        https://www.torn.com/page.php?sid=crimes*
 // @grant        none

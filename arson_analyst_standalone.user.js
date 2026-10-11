@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Arson Analyst
 // @namespace    torn
-// @version      0.25
+// @version      0.27
 // @description  Arson Analyst standalone build
 // @match        https://www.torn.com/page.php?sid=crimes*
 // @grant        none
@@ -5372,7 +5372,7 @@ window.arsonRecipes = {
 
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.26";
+    const SCRIPT_VERSION = "0.27";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     console.log(LOG_PREFIX, "Userscript loaded");
 
@@ -6307,24 +6307,45 @@ window.arsonRecipes = {
 
     const updateControls = document.createElement("div");
 
-    updateControls.style.display = "flex";
-    updateControls.style.alignItems = "center";
-    updateControls.style.gap = "8px";
+    let hasHoverControls =
+        window.matchMedia("(hover: hover)").matches;
 
-    if (!window.matchMedia("(hover: hover)").matches) {
-        updateControls.style.gap = "4px";
+    if (hasHoverControls) {
+
+        // Desktop: keep all controls on one line.
+        updateControls.style.display = "flex";
+        updateControls.style.alignItems = "center";
+        updateControls.style.gap = "8px";
+
+        updateControls.append(
+            versionLabel,
+            updateButton,
+            updateDateLabel,
+            settingsButton
+        );
+
+    } else {
+
+        // Touch devices: use two compact lines.
+        updateControls.style.display = "grid";
+        updateControls.style.gridTemplateColumns = "auto auto auto";
+        updateControls.style.alignItems = "center";
+        updateControls.style.columnGap = "6px";
+        updateControls.style.rowGap = "1px";
+
         updateButton.textContent = "Update";
+
         updateDateLabel.style.fontSize = "9px";
-        settingsButton.textContent = "Settings";
+        updateDateLabel.style.gridColumn = "1 / -1";
+        updateDateLabel.style.textAlign = "center";
+
+        updateControls.append(
+            versionLabel,
+            updateButton,
+            settingsButton,
+            updateDateLabel
+        );
     }
-
-    updateControls.append(
-        versionLabel,
-        updateButton,
-        updateDateLabel,
-        settingsButton
-    );
-
 
     // -------------------------------------------------------------------------
     // Dynamic DOM observer and startup
