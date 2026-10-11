@@ -1,6 +1,6 @@
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.27";
+    const SCRIPT_VERSION = "0.30";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     console.log(LOG_PREFIX, "Userscript loaded");
 
@@ -762,6 +762,17 @@
         updateDateLabel.textContent = formatUpdateDate(
             localStorage.getItem("arsonAnalyst.pricesLastUpdate")
         );
+        const normalUpdateText =
+            window.matchMedia("(hover: hover)").matches
+                ? "Update item prices"
+                : "Update";
+
+        updateButton.textContent = "Updated ✓";
+
+        setTimeout(function() {
+            updateButton.textContent = normalUpdateText;
+        }, 2000);
+
         console.log(LOG_PREFIX, "New prices:", newPrices);
         console.log(LOG_PREFIX, "Prices saved");
     });
@@ -954,24 +965,20 @@
 
     } else {
 
-        // Touch devices: use two compact lines.
-        updateControls.style.display = "grid";
-        updateControls.style.gridTemplateColumns = "auto auto auto";
+        // Touch devices: compact controls without the update date.
+        updateControls.style.display = "flex";
         updateControls.style.alignItems = "center";
-        updateControls.style.columnGap = "6px";
-        updateControls.style.rowGap = "1px";
+        updateControls.style.gap = "4px";
 
         updateButton.textContent = "Update";
 
-        updateDateLabel.style.fontSize = "9px";
-        updateDateLabel.style.gridColumn = "1 / -1";
-        updateDateLabel.style.textAlign = "center";
+        updateButton.style.fontSize = "11px";
+        settingsButton.style.fontSize = "11px";
 
         updateControls.append(
             versionLabel,
             updateButton,
-            settingsButton,
-            updateDateLabel
+            settingsButton
         );
     }
 
