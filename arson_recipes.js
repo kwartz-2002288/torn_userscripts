@@ -1,6 +1,7 @@
 // Arson Analyst — imported legacy recipes.
 // The raw field preserves every original source line, including uncertain Try notes.
 // Parsed fields are a convenience; check raw before relying on ambiguous entries.
+
 window.arsonRecipes = {
   "A Black Mark": [
     {

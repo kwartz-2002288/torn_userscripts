@@ -2,14 +2,14 @@
 
 set -e
 
-OUTPUT="arson_analyst_pda.user.js"
+OUTPUT="arson_analyst_standalone.user.js"
 
 cat > "$OUTPUT" <<'EOF'
 // ==UserScript==
-// @name         Arson Analyst PDA
+// @name         Arson Analyst
 // @namespace    torn
-// @version      0.24
-// @description  Arson Analyst standalone build for Torn PDA
+// @version      0.25
+// @description  Arson Analyst standalone build
 // @match        https://www.torn.com/page.php?sid=crimes*
 // @grant        none
 // ==/UserScript==

@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Arson Analyst PDA
+// @name         Arson Analyst
 // @namespace    torn
-// @version      0.24
-// @description  Arson Analyst standalone build for Torn PDA
+// @version      0.25
+// @description  Arson Analyst standalone build
 // @match        https://www.torn.com/page.php?sid=crimes*
 // @grant        none
 // ==/UserScript==
@@ -5372,7 +5372,7 @@ window.arsonRecipes = {
 
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.24";
+    const SCRIPT_VERSION = "0.25";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     console.log(LOG_PREFIX, "Userscript loaded");
 

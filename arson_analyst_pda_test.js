@@ -5379,7 +5379,7 @@ window.arsonRecipes = {
       "Hover: " +
       window.matchMedia("(hover: hover)").matches
   );
-  
+
 // Validate a Torn API key and check its access level
     async function validateApiKey(apiKey) {
         const response = await fetch(
