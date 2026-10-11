@@ -5967,7 +5967,12 @@ window.arsonRecipes = {
 
           let crimeOption = arsons[i].closest(".crime-option");
 
-          crimeOption?.addEventListener("click", function() {
+          crimeOption?.addEventListener("click", function(event) {
+
+            alert(
+                "tag: " + event.target.tagName +
+                "\nclass: " + event.target.className
+            );
 
             let scenario = arsons[i].children[1].textContent;
 
