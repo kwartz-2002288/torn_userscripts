@@ -1,6 +1,6 @@
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.21";
+    const SCRIPT_VERSION = "0.23";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     console.log(LOG_PREFIX, "Userscript loaded");
 
@@ -368,6 +368,32 @@
             .map(el => el.parentElement);
     }
 
+// Attach one click listener to an Ignite button and report the selected igniter.
+    function watchIgnite(arson) {
+
+        let crimeOption = arson.closest(".crime-option");
+        let igniteButton =
+            crimeOption?.querySelector('button[aria-label^="Ignite"]');
+
+        if (!igniteButton || igniteButton.dataset.arsonIgniteProcessed) {
+            return;
+        }
+
+        igniteButton.dataset.arsonIgniteProcessed = "true";
+
+        igniteButton.addEventListener("click", function() {
+
+            let selectedItem =
+                crimeOption.querySelector('button[aria-label$=" selected"]');
+
+            console.log(LOG_PREFIX, "Ignite:", {
+                building: arson.children[0].textContent,
+                scenario: arson.children[1].textContent,
+                igniter: selectedItem?.getAttribute("aria-label")
+            });
+        });
+    }
+
     // Attach one click listener to a Collect button and snapshot existing results.
     function watchCollect(arson) {
 
@@ -539,6 +565,8 @@
 
             // Row color may need to change later, for example when Collect appears.
             updateArsonRowColor(arsons[i]);
+            // Watch for an Ignite button.
+            watchIgnite(arsons[i]);
             // Watch for a Collect button.
             watchCollect(arsons[i]);
 
@@ -549,23 +577,97 @@
 
             arsons[i].dataset.arsonProcessed = "true";
 
-            arsons[i].addEventListener("mouseenter", function() {
+            let hasHover = window.matchMedia("(hover: hover)").matches;
 
-                let scenario = arsons[i].children[1].textContent;
+            if (hasHover) {
 
-                // No known recipe for this scenario
-                if (!recipes[scenario]) {
-                    return;
-                }
+                // Desktop: show the recipe on hover and keep it visible.
+                arsons[i].addEventListener("mouseenter", function() {
 
-                showRecipeTooltip(arsons[i], recipes[scenario]);
-            });
+                    let scenario = arsons[i].children[1].textContent;
 
-            arsons[i].addEventListener("mouseleave", function() {
-                tooltip.style.display = "none";
-            });
+                    if (!recipes[scenario]) {
+                        return;
+                    }
+
+                    showRecipeTooltip(arsons[i], recipes[scenario]);
+
+                    tooltip.dataset.scenario = scenario;
+                    tooltip.arsonAnchor = arsons[i];
+                });
+
+                // Clicking the currently displayed mission closes the tooltip.
+                arsons[i].addEventListener("click", function() {
+
+                    if (tooltip.arsonAnchor !== arsons[i]) {
+                        return;
+                    }
+
+                    tooltip.style.display = "none";
+                    tooltip.dataset.scenario = "";
+                    tooltip.arsonAnchor = null;
+                });
+
+            } else {
+
+                // Touch devices: tap the mission title to toggle the recipe.
+                let crimeOption = arsons[i].closest(".crime-option");
+
+                crimeOption?.addEventListener("click", function(event) {
+
+                    if (!event.target.matches('[class*="title"]')) {
+                        return;
+                    }
+
+                    let scenario = arsons[i].children[1].textContent;
+
+                    if (!recipes[scenario]) {
+                        return;
+                    }
+
+                    if (
+                        tooltip.style.display === "block" &&
+                        tooltip.arsonAnchor === crimeOption
+                    ) {
+                        tooltip.style.display = "none";
+                        tooltip.dataset.scenario = "";
+                        tooltip.arsonAnchor = null;
+                        return;
+                    }
+
+                    showRecipeTooltip(crimeOption, recipes[scenario]);
+
+                    let tooltipRect = tooltip.getBoundingClientRect();
+
+                    tooltip.style.left =
+                        Math.max(5, (window.innerWidth - tooltipRect.width) / 2) + "px";
+
+                    tooltip.style.top =
+                        (crimeOption.getBoundingClientRect().bottom - 5) + "px";
+
+                    tooltip.dataset.scenario = scenario;
+                    tooltip.arsonAnchor = crimeOption;
+                });
+            }
         }
     }
+
+    window.addEventListener("scroll", function() {
+
+        let anchor = tooltip.arsonAnchor;
+
+        if (
+            tooltip.style.display !== "block" ||
+            !anchor ||
+            !anchor.isConnected
+        ) {
+            return;
+        }
+
+        let rect = anchor.getBoundingClientRect();
+
+        tooltip.style.top = rect.bottom + "px";
+    }, true);
 
     // -------------------------------------------------------------------------
     // Controls: price update and profitability thresholds

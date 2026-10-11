@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Arson Analyst PDA
 // @namespace    torn
-// @version      0.22
+// @version      0.23
 // @description  Arson Analyst standalone build for Torn PDA
 // @match        https://www.torn.com/page.php?sid=crimes*
 // @grant        none
@@ -10,6 +10,7 @@
 // Arson Analyst — imported legacy recipes.
 // The raw field preserves every original source line, including uncertain Try notes.
 // Parsed fields are a convenience; check raw before relying on ambiguous entries.
+
 window.arsonRecipes = {
   "A Black Mark": [
     {
@@ -5371,7 +5372,7 @@ window.arsonRecipes = {
 
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.22";
+    const SCRIPT_VERSION = "0.23";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     console.log(LOG_PREFIX, "Userscript loaded");
 
@@ -5986,7 +5987,7 @@ window.arsonRecipes = {
 
                 crimeOption?.addEventListener("click", function(event) {
 
-                    if (!arsons[i].contains(event.target)) {
+                    if (!event.target.matches('[class*="title"]')) {
                         return;
                     }
 

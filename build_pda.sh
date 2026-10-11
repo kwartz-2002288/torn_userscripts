@@ -8,7 +8,7 @@ cat > "$OUTPUT" <<'EOF'
 // ==UserScript==
 // @name         Arson Analyst PDA
 // @namespace    torn
-// @version      0.22
+// @version      0.23
 // @description  Arson Analyst standalone build for Torn PDA
 // @match        https://www.torn.com/page.php?sid=crimes*
 // @grant        none
