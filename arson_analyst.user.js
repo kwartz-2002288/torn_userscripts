@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Arson Analyst
 // @namespace    torn
-// @version      0.31
+// @version      0.32
 // @description  Analyze Arson recipes, costs and profitability
 // @match        https://www.torn.com/page.php?sid=crimes*
 // @require      https://raw.githubusercontent.com/kwartz-2002288/torn_userscripts/main/arson_recipes.js

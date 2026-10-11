@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Arson Analyst
 // @namespace    torn
-// @version      0.31
+// @version      0.32
 // @description  Arson Analyst standalone build
 // @match        https://www.torn.com/page.php?sid=crimes*
 // @grant        none
@@ -5372,7 +5372,7 @@ window.arsonRecipes = {
 
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.31";
+    const SCRIPT_VERSION = "0.32";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     console.log(LOG_PREFIX, "Userscript loaded");
 
@@ -5715,11 +5715,13 @@ window.arsonRecipes = {
         }
 
         // Collect has priority over profitability highlighting.
-        if (crimeOption.textContent.toLowerCase().includes("collect")) {
+        let collectButton =
+            crimeOption.querySelector('button[aria-label^="Collect"]');
+
+        if (collectButton) {
             row.style.backgroundColor = "rgba(32, 92, 155, 0.78)";
             return;
         }
-
         // Otherwise, use the profitability color when a recipe is known.
         if (recipes[scenario]) {
             colorArsonRow(row, recipes[scenario]);
@@ -6318,7 +6320,7 @@ window.arsonRecipes = {
             if (isFirstSetup) {
                 updateButton.click();
             }
-            
+
             processArsons();
             settingsPanel.style.display = "none";
         });

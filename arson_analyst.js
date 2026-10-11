@@ -1,6 +1,6 @@
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.31";
+    const SCRIPT_VERSION = "0.32";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     console.log(LOG_PREFIX, "Userscript loaded");
 
@@ -343,11 +343,13 @@
         }
 
         // Collect has priority over profitability highlighting.
-        if (crimeOption.textContent.toLowerCase().includes("collect")) {
+        let collectButton =
+            crimeOption.querySelector('button[aria-label^="Collect"]');
+
+        if (collectButton) {
             row.style.backgroundColor = "rgba(32, 92, 155, 0.78)";
             return;
         }
-
         // Otherwise, use the profitability color when a recipe is known.
         if (recipes[scenario]) {
             colorArsonRow(row, recipes[scenario]);
@@ -946,7 +948,7 @@
             if (isFirstSetup) {
                 updateButton.click();
             }
-            
+
             processArsons();
             settingsPanel.style.display = "none";
         });
