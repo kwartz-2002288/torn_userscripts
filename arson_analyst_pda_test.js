@@ -5964,17 +5964,15 @@ window.arsonRecipes = {
                 tooltip.style.display = "none";
 
             });
-            
+
           arsons[i].addEventListener("click", function() {
 
-            let scenario = arsons[i].children[1].textContent;
-
-            if (!recipes[scenario]) {
-              return;
-            }
-
-            showRecipeTooltip(arsons[i], recipes[scenario]);
+            alert(
+                "children: " + arsons[i].children.length +
+                "\ntext: " + arsons[i].textContent
+            );
           });
+
         }
     }
 
