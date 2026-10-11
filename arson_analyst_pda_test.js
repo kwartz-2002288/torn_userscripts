@@ -5375,7 +5375,11 @@ window.arsonRecipes = {
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     console.log(LOG_PREFIX, "Userscript loaded");
 
-
+  alert(
+      "Hover: " +
+      window.matchMedia("(hover: hover)").matches
+  );
+  
 // Validate a Torn API key and check its access level
     async function validateApiKey(apiKey) {
         const response = await fetch(
