@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Arson Analyst
 // @namespace    torn
-// @version      0.32
+// @version      0.33
 // @description  Arson Analyst standalone build
 // @match        https://www.torn.com/page.php?sid=crimes*
 // @grant        none
@@ -5372,12 +5372,75 @@ window.arsonRecipes = {
 
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.32";
+    const SCRIPT_VERSION = "0.33";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
-    console.log(LOG_PREFIX, "Userscript loaded");
+    const PDA_KEY = "###PDA-APIKEY###";
+    const isPDA = !PDA_KEY.includes("#");
+    console.log(LOG_PREFIX, "Userscript loaded", isPDA ? "(Torn PDA)" : "");
 
+    const WANTED_IDS = [
+        45, 54, 172, 196, 200, 201, 220,
+        221, 259, 265, 275, 278, 280, 358,
+        407, 427, 742, 833, 1085, 1089, 1094,
+        1219, 1235, 1248, 1264, 1272, 1282,
+        1286, 1294, 1457, 1458, 1459, 1460,
+        1461, 1462, 1463
+    ];
 
-// Validate a Torn API key and check its access level
+    const igniters = [
+        "Lighter",
+        "Flamethrower"
+    ];
+
+    const defaultProfitThresholds = {
+        low: 1000,
+        medium: 3000,
+        high: 6000
+    };
+
+    function getRecipes() {
+        return window.arsonRecipes || {};
+    }
+
+    function getStoredApiKey() {
+        return localStorage.getItem("arsonAnalyst.apiKey") || "";
+    }
+
+    function getApiKey() {
+        return getStoredApiKey() || (isPDA ? PDA_KEY : "");
+    }
+
+    function readStoredPrices() {
+        try {
+            const parsed = JSON.parse(localStorage.getItem("arsonAnalyst.itemPrices"));
+            return parsed && typeof parsed === "object" ? parsed : {};
+        } catch (error) {
+            return {};
+        }
+    }
+
+    function hasPrices() {
+        return Object.keys(itemPrices).length > 0;
+    }
+
+    let itemPrices = readStoredPrices();
+    let pendingCollect = null;
+    let previousResults = [];
+    let autoPriceUpdateRequested = false;
+    let priceUpdateRunning = false;
+
+    let profitThresholds = {
+        low: Number(localStorage.getItem("arsonAnalyst.profitThresholdLow")) ||
+            defaultProfitThresholds.low,
+        medium: Number(localStorage.getItem("arsonAnalyst.profitThresholdMedium")) ||
+            defaultProfitThresholds.medium,
+        high: Number(localStorage.getItem("arsonAnalyst.profitThresholdHigh")) ||
+            defaultProfitThresholds.high
+    };
+
+    console.log(LOG_PREFIX, "Item prices:", itemPrices);
+    const warnedMissingPrices = new Set();
+
     async function validateApiKey(apiKey) {
         const response = await fetch(
             `https://api.torn.com/v2/key/info?key=${encodeURIComponent(apiKey)}`
@@ -5402,45 +5465,75 @@ window.arsonRecipes = {
         return data.info;
     }
 
-    // -------------------------------------------------------------------------
-    // Configuration and persistent state
-    // -------------------------------------------------------------------------
+    async function fetchItemPrices() {
+        const apiKey = getApiKey();
 
-    // Recipes database loaded by arson_recipes.js.
-    const recipes = window.arsonRecipes;
+        if (!apiKey) {
+            throw new Error("No API key set");
+        }
 
-    const igniters = [
-        "Lighter",
-        "Flamethrower"
-    ];
+        const response = await fetch(
+            "https://api.torn.com/v2/torn/" +
+            WANTED_IDS.join(",") +
+            "/items?key=" + encodeURIComponent(apiKey)
+        );
 
-    const storedPrices = localStorage.getItem(
-        "arsonAnalyst.itemPrices"
-    );
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
 
-    let itemPrices = JSON.parse(storedPrices);
-    let pendingCollect = null;
-    let previousResults = [];
-    const defaultProfitThresholds = {
-        low: 1000,
-        medium: 3000,
-        high: 6000
-    };
+        const data = await response.json();
 
-    let profitThresholds = {
-        low: Number(localStorage.getItem("arsonAnalyst.profitThresholdLow")) ||
-            defaultProfitThresholds.low,
-        medium: Number(localStorage.getItem("arsonAnalyst.profitThresholdMedium")) ||
-            defaultProfitThresholds.medium,
-        high: Number(localStorage.getItem("arsonAnalyst.profitThresholdHigh")) ||
-            defaultProfitThresholds.high
-    };
+        if (data.error) {
+            throw new Error(data.error.error || "API error");
+        }
 
-    console.log(LOG_PREFIX, " Item prices:", itemPrices);
+        const newPrices = {};
 
-    // -------------------------------------------------------------------------
-    // Tooltip UI
-    // -------------------------------------------------------------------------
+        for (const item of data.items || []) {
+            const price = item.value?.market_price;
+            if (typeof price === "number") {
+                newPrices[item.name] = price;
+            }
+        }
+
+        return newPrices;
+    }
+
+    function formatUpdateDate(timestamp) {
+        const date = new Date(Number(timestamp));
+
+        return "Prices updated: " + date.toLocaleString("en-GB", {
+            timeZone: "UTC",
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+        }) + " UTC";
+    }
+
+    function styleInfoLabel(label) {
+        label.style.fontSize = "11px";
+        label.style.opacity = "0.8";
+    }
+
+    function styleButton(button) {
+        button.style.background = "#555";
+        button.style.color = "white";
+        button.style.border = "1px solid #777";
+        button.style.borderRadius = "4px";
+        button.style.padding = "3px 8px";
+        button.style.cursor = "pointer";
+        button.style.fontSize = "11px";
+    }
+
+    function keepInsideViewport(element, left, top) {
+        const width = element.getBoundingClientRect().width;
+        element.style.left = Math.max(5, Math.min(left, window.innerWidth - width - 5)) + "px";
+        element.style.top = top + "px";
+    }
 
     const tooltip = document.createElement("div");
 
@@ -5454,83 +5547,17 @@ window.arsonRecipes = {
     tooltip.style.lineHeight = "1.4";
     tooltip.style.padding = "8px 10px";
     tooltip.style.whiteSpace = "normal";
+    tooltip.style.boxSizing = "border-box";
+    tooltip.style.maxWidth = "calc(100vw - 10px)";
 
     document.body.appendChild(tooltip);
 
-    // -------------------------------------------------------------------------
-    // Torn API and price cache
-    // -------------------------------------------------------------------------
-
-    // Fetch current market prices for every consumable used by the recipe database.
-    async function fetchItemPrices() {
-
-        const apiKey = localStorage.getItem("arsonAnalyst.apiKey");
-
-        const wantedIds = [
-            45, 54, 172, 196, 200, 201, 220,
-            221, 259, 265, 275, 278, 280, 358,
-            407, 427, 742, 833, 1085, 1089, 1094,
-            1219, 1235, 1248, 1264, 1272, 1282,
-            1286, 1294, 1457, 1458, 1459, 1460,
-            1461, 1462, 1463
-        ];
-        const response = await fetch(
-            "https://api.torn.com/v2/torn/" +
-            wantedIds.join(",") +
-            "/items?key=" + apiKey
-        );
-
-        const data = await response.json();
-        if (data.error) {
-            console.error(
-                LOG_PREFIX, "API error:",
-                data.error
-            );
-            return null;
-        }
-
-        const newPrices = {};
-
-        for (let i = 0; i < data.items.length; i++) {
-            let item = data.items[i];
-            newPrices[item.name] = item.value.market_price;
-        }
-
-        return newPrices;
+    function hideTooltip() {
+        tooltip.style.display = "none";
+        tooltip.dataset.scenario = "";
+        tooltip.arsonAnchor = null;
     }
 
-    function formatUpdateDate(timestamp) {
-
-        const date = new Date(Number(timestamp));
-
-        return "Prices updated: " + date.toLocaleString("en-GB", {
-            timeZone: "UTC",
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false
-        }) + " UTC";
-
-    }
-    console.log(
-        LOG_PREFIX, "Last update:",
-        formatUpdateDate(
-            localStorage.getItem("arsonAnalyst.pricesLastUpdate")
-        )
-    );
-
-    function styleInfoLabel(label) {
-        label.style.fontSize = "11px";
-        label.style.opacity = "0.8";
-    }
-
-    // -------------------------------------------------------------------------
-    // Tooltip formatting helpers
-    // -------------------------------------------------------------------------
-
-    // Escape values inserted into tooltip HTML.
     function escapeHTML(value) {
         return String(value).replace(/[&<>"']/g, function(char) {
             return {
@@ -5548,52 +5575,35 @@ window.arsonRecipes = {
             '<span style="color:#aaa;white-space:nowrap">' +
             (bullet ? "• " : "") + label +
             '</span>' +
-            '<span style="text-align:right;white-space:nowrap">' +
+            '<span style="text-align:right;overflow-wrap:anywhere">' +
             escapeHTML(value) +
             '</span>' +
             '</div>';
     }
 
-    // Format an item map such as {Gasoline: 2} for display.
     function formatItems(items) {
-
-        let text = "";
-
-        for (let item in items) {
-
-            if (text !== "") {
-                text = text + ", ";
-            }
-
-            text = text + items[item] + " " + item;
-        }
-
-        return text;
+        return Object.entries(items)
+            .map(([item, quantity]) => quantity + " " + item)
+            .join(", ");
     }
 
-    // -------------------------------------------------------------------------
-    // Recipe cost, nerve and profitability calculations
-    // -------------------------------------------------------------------------
-
-    // Igniters are reusable and therefore excluded from consumable cost.
     function calculateItemsCost(items) {
-
         let cost = 0;
 
-        for (let item in items) {
-
+        for (const item in items) {
             if (igniters.includes(item)) {
                 continue;
             }
 
-            if (itemPrices[item] === undefined) {
-                console.warn(
-                    LOG_PREFIX, "Missing price for:", item
-                );
+            if (typeof itemPrices[item] !== "number") {
+                if (!warnedMissingPrices.has(item)) {
+                    warnedMissingPrices.add(item);
+                    console.warn(LOG_PREFIX, "Missing price for:", item);
+                }
                 return NaN;
             }
 
-            cost = cost + items[item] * itemPrices[item];
+            cost += items[item] * itemPrices[item];
         }
 
         return cost;
@@ -5601,12 +5611,14 @@ window.arsonRecipes = {
 
     function calculateRecipeCost(recipe) {
         let cost = calculateItemsCost(recipe.place);
+
         if (recipe.igniter === "Molotov Cocktail") {
-            cost += itemPrices["Molotov Cocktail"];
+            cost += calculateItemsCost({ "Molotov Cocktail": 1 });
         }
 
-        if (recipe.stoke)
+        if (recipe.stoke) {
             cost += calculateItemsCost(recipe.stoke);
+        }
 
         if (recipe.dampen) {
             for (const [item, quantity] of Object.entries(recipe.dampen)) {
@@ -5616,54 +5628,39 @@ window.arsonRecipes = {
             }
         }
 
-        if (recipe.evidence)
+        if (recipe.evidence) {
             cost += calculateItemsCost(recipe.evidence);
+        }
 
         return cost;
     }
 
-
     function countActions(items) {
-
-        let actions = 0;
-
         if (!items) {
             return 0;
         }
 
-        for (let item in items) {
-            actions = actions + items[item];
-        }
-
-        return actions;
+        return Object.values(items).reduce((total, quantity) => total + quantity, 0);
     }
 
     function calculateNerve(recipe) {
+        const actions = 1 +
+            countActions(recipe.evidence) +
+            countActions(recipe.place) +
+            countActions(recipe.stoke) +
+            countActions(recipe.dampen);
 
-        let actions = 1;  // Ignite
-
-        actions += countActions(recipe.evidence);
-        actions += countActions(recipe.place);
-        actions += countActions(recipe.stoke);
-        actions += countActions(recipe.dampen);
-
-        // Breach (3) + Collect (2) are fixed; every counted action costs 5 nerve.
         return 5 + 5 * actions;
     }
 
     function calculateProfitPerNerve(recipe) {
-
-        let profit = recipe.payout - calculateRecipeCost(recipe);
-        let nerve = calculateNerve(recipe);
-
-        return profit / nerve;
+        return (recipe.payout - calculateRecipeCost(recipe)) / calculateNerve(recipe);
     }
 
-    // Return the best usable Profit/Nerve value among the known recipes.
     function getBestProfitPerNerve(scenarioRecipes) {
         let best = null;
 
-        for (let recipe of scenarioRecipes) {
+        for (const recipe of scenarioRecipes) {
             if (recipe.status !== "documented" ||
                 recipe.payout == null ||
                 recipe.igniter == null ||
@@ -5671,7 +5668,7 @@ window.arsonRecipes = {
                 continue;
             }
 
-            let value = calculateProfitPerNerve(recipe);
+            const value = calculateProfitPerNerve(recipe);
 
             if (Number.isFinite(value) && (best === null || value > best)) {
                 best = value;
@@ -5681,20 +5678,12 @@ window.arsonRecipes = {
         return best;
     }
 
-    // -------------------------------------------------------------------------
-    // Mission row highlighting
-    // -------------------------------------------------------------------------
-
     function colorArsonRow(element, scenarioRecipes) {
-        let profitPerNerve = getBestProfitPerNerve(scenarioRecipes);
+        const profitPerNerve = getBestProfitPerNerve(scenarioRecipes);
 
-        // No usable recipe: keep Torn's original background.
         if (profitPerNerve === null) {
             element.style.backgroundColor = "";
-            return;
-        }
-
-        if (profitPerNerve <= profitThresholds.low) {
+        } else if (profitPerNerve <= profitThresholds.low) {
             element.style.backgroundColor = "rgba(100, 45, 45, 0.55)";
         } else if (profitPerNerve <= profitThresholds.medium) {
             element.style.backgroundColor = "rgba(125, 105, 35, 0.45)";
@@ -5702,52 +5691,51 @@ window.arsonRecipes = {
             element.style.backgroundColor = "rgba(45, 105, 55, 0.45)";
         } else {
             element.style.backgroundColor = "rgba(55, 145, 65, 0.55)";
-        }    }
+        }
+    }
 
     function updateArsonRowColor(arson) {
-
-        let scenario = arson.children[1].textContent;
-        let crimeOption = arson.closest(".crime-option");
-        let row = crimeOption?.querySelector(".crime-option-sections");
+        const scenario = arson.children[1]?.textContent;
+        const crimeOption = arson.closest(".crime-option");
+        const row = crimeOption?.querySelector(".crime-option-sections");
 
         if (!row) {
             return;
         }
 
-        // Collect has priority over profitability highlighting.
-        let collectButton =
-            crimeOption.querySelector('button[aria-label^="Collect"]');
-
-        if (collectButton) {
+        if (crimeOption.querySelector('button[aria-label^="Collect"]')) {
             row.style.backgroundColor = "rgba(32, 92, 155, 0.78)";
             return;
         }
-        // Otherwise, use the profitability color when a recipe is known.
-        if (recipes[scenario]) {
-            colorArsonRow(row, recipes[scenario]);
+
+        const scenarioRecipes = getRecipes()[scenario];
+
+        if (scenarioRecipes) {
+            colorArsonRow(row, scenarioRecipes);
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Collect tracking and payout detection
-    // -------------------------------------------------------------------------
-
-    // Return the result panels currently showing SUCCESS.
     function getArsonResults() {
-        return [...document.querySelectorAll("*")]
-            .filter(el =>
-                el.children.length === 0 &&
-                el.textContent.trim() === "SUCCESS"
-            )
-            .map(el => el.parentElement);
+        const snapshot = document.evaluate(
+            "//*[not(*) and normalize-space(.)='SUCCESS']",
+            document.body,
+            null,
+            XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+            null
+        );
+
+        const results = [];
+
+        for (let i = 0; i < snapshot.snapshotLength; i++) {
+            results.push(snapshot.snapshotItem(i).parentElement);
+        }
+
+        return results;
     }
 
-// Attach one click listener to an Ignite button and report the selected igniter.
     function watchIgnite(arson) {
-
-        let crimeOption = arson.closest(".crime-option");
-        let igniteButton =
-            crimeOption?.querySelector('button[aria-label^="Ignite"]');
+        const crimeOption = arson.closest(".crime-option");
+        const igniteButton = crimeOption?.querySelector('button[aria-label^="Ignite"]');
 
         if (!igniteButton || igniteButton.dataset.arsonIgniteProcessed) {
             return;
@@ -5756,24 +5744,19 @@ window.arsonRecipes = {
         igniteButton.dataset.arsonIgniteProcessed = "true";
 
         igniteButton.addEventListener("click", function() {
-
-            let selectedItem =
-                crimeOption.querySelector('button[aria-label$=" selected"]');
+            const selectedItem = crimeOption.querySelector('button[aria-label$=" selected"]');
 
             console.log(LOG_PREFIX, "Ignite:", {
-                building: arson.children[0].textContent,
-                scenario: arson.children[1].textContent,
+                building: arson.children[0]?.textContent,
+                scenario: arson.children[1]?.textContent,
                 igniter: selectedItem?.getAttribute("aria-label")
             });
         });
     }
 
-    // Attach one click listener to a Collect button and snapshot existing results.
     function watchCollect(arson) {
-
-        let crimeOption = arson.closest(".crime-option");
-        let collectButton =
-            crimeOption?.querySelector('button[aria-label^="Collect"]');
+        const crimeOption = arson.closest(".crime-option");
+        const collectButton = crimeOption?.querySelector('button[aria-label^="Collect"]');
 
         if (!collectButton || collectButton.dataset.arsonCollectProcessed) {
             return;
@@ -5782,34 +5765,23 @@ window.arsonRecipes = {
         collectButton.dataset.arsonCollectProcessed = "true";
 
         collectButton.addEventListener("click", function() {
-            previousResults = getArsonResults();
-
-            if (
-                tooltip.arsonAnchor &&
-                crimeOption.contains(tooltip.arsonAnchor)
-            ) {
-                tooltip.style.display = "none";
-                tooltip.dataset.scenario = "";
-                tooltip.arsonAnchor = null;
+            if (tooltip.arsonAnchor && crimeOption.contains(tooltip.arsonAnchor)) {
+                hideTooltip();
             }
 
             previousResults = getArsonResults();
 
             pendingCollect = {
-                building: arson.children[0].textContent,
-                scenario: arson.children[1].textContent
+                building: arson.children[0]?.textContent,
+                scenario: arson.children[1]?.textContent
             };
 
             console.log(LOG_PREFIX, "Collect:", pendingCollect);
         });
     }
 
-    // Find the SUCCESS panel created after Collect and extract its cash payout.
     function findArsonResult() {
-
-        let currentResults = getArsonResults();
-
-        let newResult = currentResults.find(
+        const newResult = getArsonResults().find(
             result => !previousResults.includes(result)
         );
 
@@ -5817,7 +5789,7 @@ window.arsonRecipes = {
             return null;
         }
 
-        let payoutText = [...newResult.querySelectorAll("*")]
+        const payoutText = [...newResult.querySelectorAll("*")]
             .find(el => /^\$[\d,]+$/.test(el.textContent.trim()))
             ?.textContent.trim();
 
@@ -5828,246 +5800,89 @@ window.arsonRecipes = {
         return Number(payoutText.replace(/[$,]/g, ""));
     }
 
-    // -------------------------------------------------------------------------
-    // Arson DOM processing and recipe tooltip
-    // -------------------------------------------------------------------------
-
-    function showRecipeTooltip(arson, scenarioRecipes) {
-
-        let rect = arson.getBoundingClientRect();
+    function showRecipeTooltip(anchor, scenarioRecipes) {
+        const rect = anchor.getBoundingClientRect();
+        const thinLine = '<div style="border-top:1px solid #bbb;margin:6px 0"></div>';
+        const recipeLine = '<div style="border-top:1px dashed #888;margin:10px 0"></div>';
         let tooltipHTML = "";
 
-        const thinLine =
-            '<div style="border-top:1px solid #bbb;margin:6px 0"></div>';
-
-        const recipeLine =
-            '<div style="border-top:1px dashed #888;margin:10px 0"></div>';
-
-        for (let j = 0; j < scenarioRecipes.length; j++) {
-
-            let recipe = scenarioRecipes[j];
-
-            // Separator between recipes
-            if (j > 0) {
+        scenarioRecipes.forEach(function(recipe, index) {
+            if (index > 0) {
                 tooltipHTML += recipeLine;
             }
 
-            let totalCost = calculateRecipeCost(recipe);
-            let profitPerNerve = calculateProfitPerNerve(recipe);
+            const totalCost = calculateRecipeCost(recipe);
+            const profitPerNerve = calculateProfitPerNerve(recipe);
 
-            // Actions
             if (recipe.evidence) {
-                tooltipHTML += tooltipRow(
-                    "Evidence", formatItems(recipe.evidence), true
-                );
+                tooltipHTML += tooltipRow("Evidence", formatItems(recipe.evidence), true);
             }
 
-            tooltipHTML += tooltipRow(
-                "Place", formatItems(recipe.place), true
-            );
-
-            tooltipHTML += tooltipRow(
-                "Ignite", recipe.igniter, true
-            );
+            tooltipHTML += tooltipRow("Place", formatItems(recipe.place), true);
+            tooltipHTML += tooltipRow("Ignite", recipe.igniter, true);
 
             if (recipe.stoke) {
-                tooltipHTML += tooltipRow(
-                    "Stoke", formatItems(recipe.stoke), true
-                );
+                tooltipHTML += tooltipRow("Stoke", formatItems(recipe.stoke), true);
             }
 
             if (recipe.dampen) {
-                tooltipHTML += tooltipRow(
-                    "Dampen", formatItems(recipe.dampen), true
-                );
+                tooltipHTML += tooltipRow("Dampen", formatItems(recipe.dampen), true);
             }
 
-            // Results
             tooltipHTML += thinLine;
-
-            tooltipHTML += tooltipRow(
-                "Nerve",
-                calculateNerve(recipe)
-            );
-
-            tooltipHTML += tooltipRow(
-                "Payout",
-                "$" + recipe.payout.toLocaleString("en-US")
-            );
-
+            tooltipHTML += tooltipRow("Nerve", calculateNerve(recipe));
+            tooltipHTML += tooltipRow("Payout", "$" + recipe.payout.toLocaleString("en-US"));
             tooltipHTML += tooltipRow(
                 "Items Cost",
                 Number.isFinite(totalCost)
                     ? "$" + totalCost.toLocaleString("en-US")
                     : "Price unavailable"
             );
-
             tooltipHTML += tooltipRow(
                 "Profit/Nerve",
                 Number.isFinite(profitPerNerve)
                     ? "$" + Math.round(profitPerNerve).toLocaleString("en-US")
                     : "Unavailable"
             );
-        }
+        });
 
         tooltip.innerHTML = tooltipHTML;
-
-        tooltip.style.left = rect.left + "px";
-        tooltip.style.top = (rect.bottom + 5) + "px";
         tooltip.style.display = "block";
+        keepInsideViewport(tooltip, rect.left, rect.bottom + 5);
     }
 
-    // Process Arson elements currently present in the DOM. Torn virtualizes the
-    // mission list, so this function is intentionally safe to call repeatedly.
-    function processArsons() {
+    function showNotice(title, detail) {
+        const notice = document.createElement("div");
 
-        // Do nothing outside the Arson page
-        if (location.hash !== "#/arson") {
-            return;
-        }
+        notice.style.position = "fixed";
+        notice.style.background = "white";
+        notice.style.color = "black";
+        notice.style.border = "1px solid #777";
+        notice.style.borderRadius = "5px";
+        notice.style.padding = "12px 16px";
+        notice.style.zIndex = "10001";
+        notice.style.boxShadow = "0 2px 8px rgba(0,0,0,0.35)";
+        notice.style.minWidth = "200px";
+        notice.style.maxWidth = "calc(100vw - 20px)";
+        notice.style.boxSizing = "border-box";
 
-        const titles = document.querySelectorAll('[class*="title___"]');
+        notice.innerHTML = `
+        <div style="font-weight:bold; margin-bottom:6px;">${escapeHTML(title)}</div>
+        <div style="font-size:11px; margin-bottom:12px;">${escapeHTML(detail)}</div>
+        <div style="text-align:right;"><button>OK</button></div>
+    `;
 
-        for (let i = 0; i < titles.length; i++) {
+        const okButton = notice.querySelector("button");
+        styleButton(okButton);
+        okButton.addEventListener("click", function() {
+            notice.remove();
+        });
 
-            if (titles[i].textContent.trim() === "Arson") {
-
-                if (!updateButton.isConnected) {
-                    titles[i].after(updateControls);
-
-                    if (!localStorage.getItem("arsonAnalyst.apiKey")) {
-                        settingsButton.click();
-                    }
-                }
-
-                break;
-            }
-        }
-        const arsons =
-            document.querySelectorAll('[class*="titleAndScenario"]');
-
-        for (let i = 0; i < arsons.length; i++) {
-
-            // Row color may need to change later, for example when Collect appears.
-            updateArsonRowColor(arsons[i]);
-            // Watch for an Ignite button.
-            watchIgnite(arsons[i]);
-            // Watch for a Collect button.
-            watchCollect(arsons[i]);
-
-            // Event listeners only need to be added once.
-            if (arsons[i].dataset.arsonProcessed) {
-                continue;
-            }
-
-            arsons[i].dataset.arsonProcessed = "true";
-
-            let hasHover = window.matchMedia("(hover: hover)").matches;
-
-            if (hasHover) {
-
-                // Desktop: show the recipe on hover and keep it visible.
-                arsons[i].addEventListener("mouseenter", function() {
-
-                    let scenario = arsons[i].children[1].textContent;
-
-                    if (!recipes[scenario]) {
-                        return;
-                    }
-
-                    showRecipeTooltip(arsons[i], recipes[scenario]);
-
-                    tooltip.dataset.scenario = scenario;
-                    tooltip.arsonAnchor = arsons[i];
-                });
-
-                // Clicking the currently displayed mission closes the tooltip.
-                arsons[i].addEventListener("click", function() {
-
-                    if (tooltip.arsonAnchor !== arsons[i]) {
-                        return;
-                    }
-
-                    tooltip.style.display = "none";
-                    tooltip.dataset.scenario = "";
-                    tooltip.arsonAnchor = null;
-                });
-
-            } else {
-
-                // Touch devices: tap the mission title to toggle the recipe.
-                let crimeOption = arsons[i].closest(".crime-option");
-
-                crimeOption?.addEventListener("click", function(event) {
-
-                    if (!event.target.matches('[class*="title"]')) {
-                        return;
-                    }
-
-                    let scenario = arsons[i].children[1].textContent;
-
-                    if (!recipes[scenario]) {
-                        return;
-                    }
-
-                    if (
-                        tooltip.style.display === "block" &&
-                        tooltip.arsonAnchor === crimeOption
-                    ) {
-                        tooltip.style.display = "none";
-                        tooltip.dataset.scenario = "";
-                        tooltip.arsonAnchor = null;
-                        return;
-                    }
-
-                    showRecipeTooltip(crimeOption, recipes[scenario]);
-
-                    let tooltipRect = tooltip.getBoundingClientRect();
-
-                    tooltip.style.left =
-                        Math.max(5, (window.innerWidth - tooltipRect.width) / 2) + "px";
-
-                    tooltip.style.top =
-                        (crimeOption.getBoundingClientRect().bottom - 5) + "px";
-
-                    tooltip.dataset.scenario = scenario;
-                    tooltip.arsonAnchor = crimeOption;
-                });
-            }
-        }
+        document.body.appendChild(notice);
+        const rect = updateButton.getBoundingClientRect();
+        keepInsideViewport(notice, rect.left, rect.bottom + 5);
     }
 
-    window.addEventListener("scroll", function() {
-
-        let anchor = tooltip.arsonAnchor;
-
-        if (
-            tooltip.style.display !== "block" ||
-            !anchor ||
-            !anchor.isConnected
-        ) {
-            return;
-        }
-
-        let rect = anchor.getBoundingClientRect();
-
-        tooltip.style.top = rect.bottom + "px";
-    }, true);
-
-    // -------------------------------------------------------------------------
-    // Controls: price update and profitability thresholds
-    // -------------------------------------------------------------------------
-
-    function styleButton(button) {
-        button.style.background = "#555";
-        button.style.color = "white";
-        button.style.border = "1px solid #777";
-        button.style.borderRadius = "4px";
-        button.style.padding = "3px 8px";
-        button.style.cursor = "pointer";
-        button.style.fontSize = "11px";
-    }
-// Display the running script version on the Arson page.
     const flameStyle = document.createElement("style");
 
     flameStyle.textContent = `
@@ -6087,7 +5902,9 @@ window.arsonRecipes = {
 `;
 
     document.head.appendChild(flameStyle);
+
     const logoData = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAWCAYAAADAQbwGAAAEp0lEQVR4nJ2VWUyUVxiG3+/8/8/ADDMsiiziICAii4gLqCwyuJSWahfjWCXRQLAaY+JSY9O06khs0tbGJnpRtVp7w4UZS2oaKheWACWltSIurRFEBaQiYgUHOsDMv3y9kFrTaGn7Xp+873Pe7+R8wDhaE4QYAAQALkCMd/65chVABoB92QE7anYlny+aak0GAJfrf5o+pmEqScDM0T0zuPmDXT3z0tKmMDP9E+nz01IhE4htCYjxNLUac65ci965NPQTIuJ9bjf9N7oCyGO1BdeW4DxnBxvtgWb/9ZIodUUipgH07/t0OyEBhNfsmFu3Ci2cp3CPJUD9CdLocLGJPy7Eur9Cx7my2wlp9WnS92bwug9fsn3vCJg523OR1F9HVTKTgSCTyooGi8sF4RiPjAiQBGFLnOTofDuWufqg7psV5etWoLWANG801IF1xJvi4ACA5o1QMNbLMwn32hGqG4QVmfr2OLMdmrta5YFeOdBOFBsGNqeS3GXw9da7gdq2GZbt8z6Dyq5nGDoBCQBpgcg8sIRrDQumoeUiG3V1kjyZ2JbFsFoZCAGLSGFq0Mwdy8sK363aGvkpVYCZIZ4mFU4nQAB3Gxheb8PiRw+R4p3uYzmMiO0EKZ0gp5DQu1hP70dCZVH/F4qv587KCH3z8ZdxiAiG2/nULMYSAr4pRmO/Ddqt3SF+79EgXV0KTS2FplWH6eohSfevId2fI2mD2cS9a8GPouDrLSUuS8F8Bp48dkEEo7IYR4tFcJ6hKIbdFyaZL/ogvwCSX5xNnJkGTNehLGEopaFkLc/SpHOk+z3CiBwCL4oXhQSwo2DMcPc8rFk+dUIZEnNVW4wm6PodfDdqQlXnDAzOTQNMnZBT43G5TcKpq5HoDb8vQmYzheRDAjHutRqxKQiMq3fAcAFC5E/BzpA+jX2xEiklk+iCbMD/6gmkbzqJmv2VkCcWoaPZglZRjvz3qnH2cA+U8ngEbIiW7w3DF744/ZVtK2NKKypgOFwFQkQIJPPoEEklAWI0YwhtUhoWLhtActIP8FsWYuTSTbSc9WDB+iREB59CxLJluKZ6gaQRDglTxKaM36dM9HSFAoADDRDaCIY5S2ZZO8cNZ0aQvSUezZWH8O3xY8hZa8OJogZMyJgMxVuNk9sPIN/JuPR1P/DbIMyswmjqRMd9vQ0A6usB0daFGpEAetjo1Qc84UiJaodJVxEdoiPRfAt9KTZkZz4Cd3YgMTUcoSOtsIXa0F6tGdgWLF0RYvDLX/AVEVDfAINyAfuxMuWCJT9q0gMv+/p/vC/fa1RpJADI2RgBa5od/vZu1B/pg0UHbLNMPDXbqlOsRSTZhHywrGPDnof0uXsVS6tPQycIwgaDF7y5MbIqaH5cjO65jcw8Xffe8Bu1NcOQWUCFgUUrJyAs1EOXm2Q5MH0mAgclnHn/0js7bvo+cjsfmwEY+5mJYAaiqsozD948t+TOgxu5zMOvMxvFzOpmZt7K7CvkoRuRfLdpjqd2f+6ZN4AcAOC/rYQny6dCwIABAAh/K9Wal7LQlmWLsccrljCr4enxeft+7um+bbp6pG648S7QDgDshER/ko3pD5Us76HkDma3AAAAAElFTkSuQmCC";
+
     const versionLabel = document.createElement("span");
     versionLabel.innerHTML = `
 <a href="https://www.torn.com/profiles.php?XID=2002288"
@@ -6108,81 +5925,65 @@ window.arsonRecipes = {
     versionLabel.style.display = "inline-flex";
     versionLabel.style.alignItems = "center";
 
-    function showUpdateNotice() {
+    const updateDateLabel = document.createElement("span");
+    styleInfoLabel(updateDateLabel);
 
-        const notice = document.createElement("div");
+    const lastUpdate = localStorage.getItem("arsonAnalyst.pricesLastUpdate");
 
-        notice.style.position = "fixed";
-        notice.style.left = "33%";
-        notice.style.top = "25%";
-        notice.style.transform = "translate(-50%, -50%)";
-        notice.style.background = "white";
-        notice.style.color = "black";
-        notice.style.border = "1px solid #777";
-        notice.style.borderRadius = "5px";
-        notice.style.padding = "12px 16px";
-        notice.style.zIndex = "10001";
-        notice.style.boxShadow = "0 2px 8px rgba(0,0,0,0.35)";
-        notice.style.minWidth = "200px";
-
-        notice.innerHTML = `
-        <div style="font-weight:bold; margin-bottom:6px;">
-            Item prices updated
-        </div>
-        <div style="font-size:11px; margin-bottom:12px;">
-            ${formatUpdateDate(Date.now())}
-        </div>
-        <div style="text-align:right;">
-            <button>OK</button>
-        </div>
-    `;
-
-        const okButton = notice.querySelector("button");
-        styleButton(okButton);
-
-        okButton.addEventListener("click", function() {
-            notice.remove();
-        });
-
-        document.body.appendChild(notice);
+    if (lastUpdate) {
+        updateDateLabel.textContent = formatUpdateDate(lastUpdate);
     }
-    // Create the update prices button.
-    const updateButton = document.createElement("button");
 
+    const updateButton = document.createElement("button");
     updateButton.id = "arson-analyst-update";
     updateButton.textContent = "Update item prices";
     styleButton(updateButton);
     updateButton.style.marginLeft = "10px";
-    updateButton.addEventListener("click", async function() {
 
-        console.log(LOG_PREFIX, "Updating prices...");
-
-        let newPrices = await fetchItemPrices();
-        if (newPrices === null) {
+    async function updatePrices(showResult) {
+        if (priceUpdateRunning) {
             return;
         }
 
-        itemPrices = newPrices;
-        localStorage.setItem(
-            "arsonAnalyst.itemPrices",
-            JSON.stringify(newPrices)
-        );
-        localStorage.setItem(
-            "arsonAnalyst.pricesLastUpdate",
-            String(Date.now())
-        );
-        updateDateLabel.textContent = formatUpdateDate(
-            localStorage.getItem("arsonAnalyst.pricesLastUpdate")
-        );
+        if (!getApiKey()) {
+            settings.open();
+            return;
+        }
 
-        showUpdateNotice();
+        priceUpdateRunning = true;
+        updateButton.disabled = true;
+        console.log(LOG_PREFIX, "Updating prices...");
 
-        console.log(LOG_PREFIX, "New prices:", newPrices);
-        console.log(LOG_PREFIX, "Prices saved");
+        try {
+            const newPrices = await fetchItemPrices();
+            const now = String(Date.now());
+
+            itemPrices = newPrices;
+            warnedMissingPrices.clear();
+            localStorage.setItem("arsonAnalyst.itemPrices", JSON.stringify(newPrices));
+            localStorage.setItem("arsonAnalyst.pricesLastUpdate", now);
+            updateDateLabel.textContent = formatUpdateDate(now);
+
+            console.log(LOG_PREFIX, "New prices:", newPrices);
+            processArsons();
+
+            if (showResult) {
+                showNotice("Item prices updated", formatUpdateDate(now));
+            }
+        } catch (error) {
+            console.error(LOG_PREFIX, "Price update failed:", error);
+            showNotice("Item prices not updated", error.message);
+        } finally {
+            priceUpdateRunning = false;
+            updateButton.disabled = false;
+        }
+    }
+
+    updateButton.addEventListener("click", function() {
+        updatePrices(true);
     });
 
-    function createSettingsButton() {
-
+    function createSettings() {
         const settingsButton = document.createElement("button");
         settingsButton.textContent = "Settings";
         styleButton(settingsButton);
@@ -6190,39 +5991,37 @@ window.arsonRecipes = {
         const settingsPanel = document.createElement("div");
 
         settingsPanel.style.display = "none";
-        settingsPanel.style.position = "absolute";
+        settingsPanel.style.position = "fixed";
         settingsPanel.style.background = "white";
         settingsPanel.style.color = "black";
         settingsPanel.style.border = "1px solid #777";
         settingsPanel.style.borderRadius = "4px";
         settingsPanel.style.padding = "10px";
         settingsPanel.style.zIndex = "10000";
+        settingsPanel.style.maxWidth = "calc(100vw - 10px)";
+        settingsPanel.style.boxSizing = "border-box";
+
+        const keyHelp = isPDA
+            ? "Leave empty to use your Torn PDA key<br>\"Public Only\" API key is sufficient"
+            : "Edit and Save to change key<br>\"Public Only\" API key is sufficient";
 
         settingsPanel.innerHTML = `
-    <div style="font-weight:bold; margin-bottom:8px;">
-        API key
-    </div>
-
+    <div style="font-weight:bold; margin-bottom:8px;">API key</div>
     <div>
         <input id="arson-api-key"
                type="text"
-               placeholder="Enter a valid Torn API key"
-               style="width:180px; padding:3px 5px; 
+               placeholder="${isPDA ? "Using your Torn PDA key" : "Enter a valid Torn API key"}"
+               style="width:180px; max-width:100%; padding:3px 5px;
                border:1px solid #777; border-radius:3px; background:#fff;">
     </div>
-    <div style="font-size:11px; margin-top:3px; opacity:0.75;">
-        Edit and Save to change key<br>
-        "Public Only" API key is sufficient
-    </div>
+    <div style="font-size:11px; margin-top:3px; opacity:0.75;">${keyHelp}</div>
 
-
-    <div style="font-weight:bold; margin-top:12px; margin-bottom:8px;">
-        Profit/Nerve color thresholds
-    </div>
-
+    <div style="font-weight:bold; margin-top:12px; margin-bottom:8px;">Profit/Nerve color thresholds</div>
     <div>Low: <input id="threshold-low" type="number" step="500" style="width:65px"></div>
     <div>Medium: <input id="threshold-medium" type="number" step="500" style="width:65px"></div>
     <div>High: <input id="threshold-high" type="number" step="500" style="width:65px"></div>
+
+    <div id="arson-settings-status" style="font-size:11px; color:#c00; margin-top:6px;"></div>
 
     <div style="margin-top:8px; text-align:right;">
         <button id="arson-settings-defaults">Defaults</button>
@@ -6232,188 +6031,248 @@ window.arsonRecipes = {
 
         document.body.appendChild(settingsPanel);
 
-        const lowInput =
-            settingsPanel.querySelector("#threshold-low");
-        const mediumInput =
-            settingsPanel.querySelector("#threshold-medium");
-        const highInput =
-            settingsPanel.querySelector("#threshold-high");
-        const apiKeyInput =
-            settingsPanel.querySelector("#arson-api-key");
-        const settingsDefaultsButton =
-            settingsPanel.querySelector("#arson-settings-defaults");
-        const settingsSaveButton =
-            settingsPanel.querySelector("#arson-settings-save");
+        const lowInput = settingsPanel.querySelector("#threshold-low");
+        const mediumInput = settingsPanel.querySelector("#threshold-medium");
+        const highInput = settingsPanel.querySelector("#threshold-high");
+        const apiKeyInput = settingsPanel.querySelector("#arson-api-key");
+        const statusLabel = settingsPanel.querySelector("#arson-settings-status");
+        const defaultsButton = settingsPanel.querySelector("#arson-settings-defaults");
+        const saveButton = settingsPanel.querySelector("#arson-settings-save");
 
-        styleButton(settingsDefaultsButton);
-        styleButton(settingsSaveButton);
+        styleButton(defaultsButton);
+        styleButton(saveButton);
 
         function displayThresholds(thresholds) {
             lowInput.value = thresholds.low;
             mediumInput.value = thresholds.medium;
             highInput.value = thresholds.high;
         }
-        apiKeyInput.value =
-            localStorage.getItem("arsonAnalyst.apiKey") || "";
-        displayThresholds(profitThresholds);
 
-        if (!apiKeyInput.value) {
-            settingsPanel.style.border = "14px solid #ff3030";
+        function open() {
+            displayThresholds(profitThresholds);
+            apiKeyInput.value = getStoredApiKey();
+            statusLabel.textContent = "";
+            settingsPanel.style.border = getApiKey() ? "1px solid #777" : "14px solid #ff3030";
+            settingsPanel.style.display = "block";
+
+            const rect = settingsButton.getBoundingClientRect();
+            keepInsideViewport(settingsPanel, rect.left, rect.bottom + 4);
         }
 
-        settingsDefaultsButton.addEventListener("click", function() {
+        function close() {
+            settingsPanel.style.display = "none";
+        }
+
+        defaultsButton.addEventListener("click", function() {
             displayThresholds(defaultProfitThresholds);
         });
 
-        settingsSaveButton.addEventListener("click", async function() {
-
+        saveButton.addEventListener("click", async function() {
             const apiKey = apiKeyInput.value.trim();
-
-            const isFirstSetup =
-                localStorage.getItem("arsonAnalyst.apiKey") === null;
-
-            if (!apiKey) {
-                alert("A Torn API key is required.");
-                return;
-            }
-
-            try {
-                await validateApiKey(apiKey);
-            } catch (error) {
-                alert(`API key validation failed:\n${error.message}`);
-                return;
-            }
-
-            localStorage.setItem("arsonAnalyst.apiKey", apiKey);
-            settingsPanel.style.border = "1px solid #777";
-
             const thresholds = {
                 low: Number(lowInput.value),
                 medium: Number(mediumInput.value),
                 high: Number(highInput.value)
             };
 
-            if (!(thresholds.low < thresholds.medium &&
-                thresholds.medium < thresholds.high)) {
-                alert("Thresholds must be in increasing order.");
+            if (!(thresholds.low < thresholds.medium && thresholds.medium < thresholds.high)) {
+                statusLabel.textContent = "Thresholds must be in increasing order.";
                 return;
             }
 
-            console.log(LOG_PREFIX, "Thresholds:", thresholds);
+            if (!apiKey && !isPDA) {
+                statusLabel.textContent = "A Torn API key is required.";
+                return;
+            }
+
+            if (apiKey) {
+                saveButton.disabled = true;
+                statusLabel.textContent = "Checking API key...";
+
+                try {
+                    await validateApiKey(apiKey);
+                } catch (error) {
+                    statusLabel.textContent = `API key validation failed: ${error.message}`;
+                    return;
+                } finally {
+                    saveButton.disabled = false;
+                }
+
+                localStorage.setItem("arsonAnalyst.apiKey", apiKey);
+            } else {
+                localStorage.removeItem("arsonAnalyst.apiKey");
+            }
 
             profitThresholds = thresholds;
+            localStorage.setItem("arsonAnalyst.profitThresholdLow", String(thresholds.low));
+            localStorage.setItem("arsonAnalyst.profitThresholdMedium", String(thresholds.medium));
+            localStorage.setItem("arsonAnalyst.profitThresholdHigh", String(thresholds.high));
+            console.log(LOG_PREFIX, "Thresholds:", thresholds);
 
-            localStorage.setItem(
-                "arsonAnalyst.profitThresholdLow",
-                String(profitThresholds.low)
-            );
-            localStorage.setItem(
-                "arsonAnalyst.profitThresholdMedium",
-                String(profitThresholds.medium)
-            );
-            localStorage.setItem(
-                "arsonAnalyst.profitThresholdHigh",
-                String(profitThresholds.high)
-            );
+            close();
 
-// Fetch item prices automatically during the first setup.
-            if (isFirstSetup) {
-                updateButton.click();
+            if (!hasPrices()) {
+                updatePrices(true);
             }
 
             processArsons();
-            settingsPanel.style.display = "none";
         });
 
         settingsButton.addEventListener("click", function() {
-
             if (settingsPanel.style.display === "none") {
-
-                displayThresholds(profitThresholds);
-                let rect = settingsButton.getBoundingClientRect();
-
-                settingsPanel.style.left = rect.left + "px";
-                settingsPanel.style.top = (rect.bottom + 4) + "px";
-                settingsPanel.style.display = "block";
-
+                open();
             } else {
-                settingsPanel.style.display = "none";
+                close();
             }
         });
 
-        return settingsButton;
+        return { button: settingsButton, open: open };
     }
 
-    const settingsButton = createSettingsButton();
-    const updateDateLabel = document.createElement("span");
-    styleInfoLabel(updateDateLabel);
-
-    const lastUpdate = localStorage.getItem(
-        "arsonAnalyst.pricesLastUpdate"
-    );
-
-    if (lastUpdate) {
-        updateDateLabel.textContent = formatUpdateDate(lastUpdate);
-    }
+    const settings = createSettings();
 
     const updateControls = document.createElement("div");
+    updateControls.style.display = "flex";
+    updateControls.style.alignItems = "center";
+    updateControls.style.flexWrap = "nowrap";
+    updateControls.style.minWidth = "0";
 
-    let hasHoverControls =
-        window.matchMedia("(hover: hover)").matches;
+    const hasHover = window.matchMedia("(hover: hover)").matches;
+    const isNarrow = window.matchMedia("(max-width: 600px)").matches;
 
-    if (hasHoverControls) {
-
-        // Desktop: keep all controls on one line.
-        updateControls.style.display = "flex";
-        updateControls.style.alignItems = "center";
+    if (hasHover && !isNarrow) {
         updateControls.style.gap = "8px";
-
-        updateControls.append(
-            versionLabel,
-            updateButton,
-            updateDateLabel,
-            settingsButton
-        );
-
+        updateControls.append(versionLabel, updateButton, updateDateLabel, settings.button);
     } else {
-
-        // Touch devices: compact controls without the update date.
-        updateControls.style.display = "flex";
-        updateControls.style.alignItems = "center";
         updateControls.style.gap = "4px";
-
         updateButton.textContent = "Update";
-
-        updateButton.style.fontSize = "11px";
-        settingsButton.style.fontSize = "11px";
-
-        updateControls.append(
-            versionLabel,
-            updateButton,
-            settingsButton
-        );
+        updateButton.style.marginLeft = "0";
+        updateControls.append(versionLabel, updateButton, settings.button);
     }
 
-    // -------------------------------------------------------------------------
-    // Dynamic DOM observer and startup
-    // -------------------------------------------------------------------------
+    function attachControls() {
+        if (updateControls.isConnected) {
+            return;
+        }
 
-    // Torn creates, removes and replaces mission elements dynamically.
-    const observer = new MutationObserver(function() {
+        const title = [...document.querySelectorAll('[class*="title___"]')]
+            .find(el => el.textContent.trim() === "Arson");
 
-        if (
-            tooltip.arsonAnchor &&
-            !tooltip.arsonAnchor.isConnected
-        ) {
-            tooltip.style.display = "none";
-            tooltip.dataset.scenario = "";
-            tooltip.arsonAnchor = null;
+        if (!title) {
+            return;
+        }
+
+        title.after(updateControls);
+
+        if (!getApiKey()) {
+            settings.open();
+        } else if (!hasPrices() && !autoPriceUpdateRequested) {
+            autoPriceUpdateRequested = true;
+            updatePrices(false);
+        }
+    }
+
+    function processArsons() {
+        if (location.hash !== "#/arson") {
+            return;
+        }
+
+        attachControls();
+
+        const recipes = getRecipes();
+        const arsons = document.querySelectorAll('[class*="titleAndScenario"]');
+
+        for (const arson of arsons) {
+            updateArsonRowColor(arson);
+            watchIgnite(arson);
+            watchCollect(arson);
+
+            if (arson.dataset.arsonProcessed) {
+                continue;
+            }
+
+            arson.dataset.arsonProcessed = "true";
+
+            if (hasHover) {
+                arson.addEventListener("mouseenter", function() {
+                    const scenario = arson.children[1]?.textContent;
+
+                    if (!recipes[scenario]) {
+                        return;
+                    }
+
+                    showRecipeTooltip(arson, recipes[scenario]);
+                    tooltip.dataset.scenario = scenario;
+                    tooltip.arsonAnchor = arson;
+                });
+
+                arson.addEventListener("click", function() {
+                    if (tooltip.arsonAnchor === arson) {
+                        hideTooltip();
+                    }
+                });
+            } else {
+                const crimeOption = arson.closest(".crime-option");
+
+                crimeOption?.addEventListener("click", function(event) {
+                    if (!event.target.matches('[class*="title"]')) {
+                        return;
+                    }
+
+                    const scenario = arson.children[1]?.textContent;
+
+                    if (!recipes[scenario]) {
+                        return;
+                    }
+
+                    if (tooltip.style.display === "block" && tooltip.arsonAnchor === crimeOption) {
+                        hideTooltip();
+                        return;
+                    }
+
+                    showRecipeTooltip(crimeOption, recipes[scenario]);
+
+                    const tooltipRect = tooltip.getBoundingClientRect();
+                    tooltip.style.left = Math.max(5, (window.innerWidth - tooltipRect.width) / 2) + "px";
+                    tooltip.style.top = (crimeOption.getBoundingClientRect().bottom - 5) + "px";
+                    tooltip.dataset.scenario = scenario;
+                    tooltip.arsonAnchor = crimeOption;
+                });
+            }
+        }
+    }
+
+    window.addEventListener("scroll", function() {
+        const anchor = tooltip.arsonAnchor;
+
+        if (tooltip.style.display !== "block" || !anchor || !anchor.isConnected) {
+            return;
+        }
+
+        tooltip.style.top = anchor.getBoundingClientRect().bottom + "px";
+    }, true);
+
+    if (!hasHover) {
+        document.addEventListener("click", function(event) {
+            const anchor = tooltip.arsonAnchor;
+
+            if (tooltip.style.display !== "block" || tooltip.contains(event.target) || anchor?.contains(event.target)) {
+                return;
+            }
+
+            hideTooltip();
+        }, true);
+    }
+
+    function onDomChange() {
+        if (tooltip.arsonAnchor && !tooltip.arsonAnchor.isConnected) {
+            hideTooltip();
         }
 
         processArsons();
 
         if (pendingCollect) {
-            let payout = findArsonResult();
+            const payout = findArsonResult();
 
             if (payout !== null) {
                 console.log(LOG_PREFIX, "Result:", {
@@ -6425,6 +6284,21 @@ window.arsonRecipes = {
                 pendingCollect = null;
             }
         }
+    }
+
+    let updateScheduled = false;
+
+    const observer = new MutationObserver(function() {
+        if (updateScheduled) {
+            return;
+        }
+
+        updateScheduled = true;
+
+        requestAnimationFrame(function() {
+            updateScheduled = false;
+            onDomChange();
+        });
     });
 
     observer.observe(document.body, {
@@ -6432,8 +6306,5 @@ window.arsonRecipes = {
         subtree: true
     });
 
-
-    // Process elements that may already exist when the userscript starts.
     processArsons();
-
 })();
