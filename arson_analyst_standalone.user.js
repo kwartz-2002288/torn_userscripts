@@ -5848,7 +5848,7 @@ window.arsonRecipes = {
 
         tooltip.innerHTML = tooltipHTML;
         tooltip.style.display = "block";
-        const tooltipLeft = hasHover ? rect.left + 60 : rect.left;
+        const tooltipLeft = hasHover ? rect.left + 40 : rect.left;
         keepInsideViewport(tooltip, tooltipLeft, rect.bottom + 5);
     }
 
@@ -5992,7 +5992,7 @@ window.arsonRecipes = {
         const settingsPanel = document.createElement("div");
 
         settingsPanel.style.display = "none";
-        settingsPanel.style.position = "fixed";
+        settingsPanel.style.position = isPDA ? "absolute" : "fixed";
         settingsPanel.style.background = "white";
         settingsPanel.style.color = "black";
         settingsPanel.style.border = "1px solid #777";
@@ -6055,9 +6055,14 @@ window.arsonRecipes = {
             statusLabel.textContent = "";
             settingsPanel.style.border = getApiKey() ? "1px solid #777" : "14px solid #ff3030";
             settingsPanel.style.display = "block";
-
             const rect = settingsButton.getBoundingClientRect();
-            keepInsideViewport(settingsPanel, rect.left, rect.bottom + 4);
+
+            if (isPDA) {
+                settingsPanel.style.left = Math.max(5, rect.left + window.scrollX) + "px";
+                settingsPanel.style.top = (rect.bottom + window.scrollY + 4) + "px";
+            } else {
+                keepInsideViewport(settingsPanel, rect.left, rect.bottom + 4);
+            }
         }
 
         function close() {
