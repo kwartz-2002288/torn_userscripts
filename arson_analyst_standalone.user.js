@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Arson Analyst
 // @namespace    torn
-// @version      0.33
+// @version      0.34
 // @description  Arson Analyst standalone build
 // @match        https://www.torn.com/page.php?sid=crimes*
 // @grant        none
@@ -5372,7 +5372,7 @@ window.arsonRecipes = {
 
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.33";
+    const SCRIPT_VERSION = "0.34";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     const PDA_KEY = "###PDA-APIKEY###";
     const isPDA = !PDA_KEY.includes("#");
@@ -5848,7 +5848,8 @@ window.arsonRecipes = {
 
         tooltip.innerHTML = tooltipHTML;
         tooltip.style.display = "block";
-        keepInsideViewport(tooltip, rect.left, rect.bottom + 5);
+        const tooltipLeft = hasHover ? rect.left + 60 : rect.left;
+        keepInsideViewport(tooltip, tooltipLeft, rect.bottom + 5);
     }
 
     function showNotice(title, detail) {
