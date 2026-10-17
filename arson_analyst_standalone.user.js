@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Arson Analyst
 // @namespace    torn
-// @version      0.34
+// @version      0.35
 // @description  Arson Analyst standalone build
 // @match        https://www.torn.com/page.php?sid=crimes*
 // @grant        none
@@ -5372,7 +5372,7 @@ window.arsonRecipes = {
 
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.34";
+    const SCRIPT_VERSION = "0.35";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     const PDA_KEY = "###PDA-APIKEY###";
     const isPDA = !PDA_KEY.includes("#");

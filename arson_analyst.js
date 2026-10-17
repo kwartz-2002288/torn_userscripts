@@ -1,6 +1,6 @@
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.34";
+    const SCRIPT_VERSION = "0.35";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     const PDA_KEY = "###PDA-APIKEY###";
     const isPDA = !PDA_KEY.includes("#");
