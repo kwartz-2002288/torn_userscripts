@@ -1,6 +1,6 @@
 (function() {
     'use strict';
-    const SCRIPT_VERSION = "0.33";
+    const SCRIPT_VERSION = "0.34";
     const LOG_PREFIX = `[Arson Analyst ${SCRIPT_VERSION}]`;
     const PDA_KEY = "###PDA-APIKEY###";
     const isPDA = !PDA_KEY.includes("#");
@@ -476,7 +476,8 @@
 
         tooltip.innerHTML = tooltipHTML;
         tooltip.style.display = "block";
-        keepInsideViewport(tooltip, rect.left, rect.bottom + 5);
+        const tooltipLeft = hasHover ? rect.left + 60 : rect.left;
+        keepInsideViewport(tooltip, tooltipLeft, rect.bottom + 5);
     }
 
     function showNotice(title, detail) {
